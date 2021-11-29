@@ -43,4 +43,4 @@ format the commit message like this:
 ...
 ```
 
-Don't be scared to give too many details in a commit message, an over detailed commit message is better than a under detailed one.
+Don't be afraid to give too many details in a commit message, an over detailed commit message is better than a under detailed one.
