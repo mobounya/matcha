@@ -2,11 +2,12 @@
 
 ## Env variables
 
-| Name          | Required | Type      | Default value | Description                            |
-| ------------- | -------- | --------- | ------------- | -------------------------------------- |
-| `APP_PORT`    | true     | `integer` | -             | Port that express will be listening on |
-| `DB_USER`     | true     | `string`  | -             |                                        |
-| `DB_PASSWORD` | true     | `string`  | -             |                                        |
+| Name           | Required | Type      | Default value | Description                           |
+| -------------- | -------- | --------- | ------------- | ------------------------------------- |
+| `APP_PORT`     | true     | `integer` | -             | You can access the API from this port |
+| `ADMINER_PORT` | true     | `string`  | -             | Used to access Adminer from the web   |
+| `DB_USER`      | true     | `string`  | -             |                                       |
+| `DB_PASSWORD`  | true     | `string`  | -             |                                       |
 
 ## Getting Started
 
