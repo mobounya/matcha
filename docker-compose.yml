@@ -1,32 +1,36 @@
 version: "3.3"
 
 services:
-  matcha_app:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    environment:
-      CHOKIDAR_USEPOLLING: "true"
-    ports:
-      - ${APP_PORT}:3000
-    volumes:
-      - ./:/home/node/app
 
-  matcha_adminer:
-    image: adminer
-    ports:
-      - ${ADMINER_PORT}:8080
-    links:
-      - "matcha_db:db"
+  matcha_app:
+    container_name: 'matcha_app'
     restart: always
+    depends_on:
+      - matcha_db
+    build:
+      context: ./backend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./backend:/home/node/app
+    env_file:
+      - ./backend/.env.app.dev
+    networks:
+      - backend-net
 
   matcha_db:
+    container_name: 'matcha_db'
     image: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - ./backend/.env.db.dev
+    networks:
+      - backend-net
+      
 
 volumes:
   postgres-data:
+
+networks:
+  backend-net:
