@@ -1,8 +1,17 @@
 const express = require("express");
 const router = express.Router();
 
-router.post("/signup", () => {
-  console.log("Implement signup");
-});
+const {
+  validateSchema,
+  requestFields
+} = require("../middlewares/schema-validator");
+
+const { signupSchema } = require("../notJoi_schemas/signup-schema");
+
+/* 
+  User routes
+*/
+
+router.post("/signup", validateSchema(signupSchema, requestFields.BODY));
 
 module.exports = router;
