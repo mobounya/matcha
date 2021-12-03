@@ -11,6 +11,15 @@ services:
       - ${APP_PORT}:3000
     volumes:
       - ./:/home/node/app
+
+  matcha_adminer:
+    image: adminer
+    ports:
+      - ${ADMINER_PORT}:8080
+    links:
+      - "matcha_db:db"
+    restart: always
+
   matcha_db:
     image: postgres
     volumes:
