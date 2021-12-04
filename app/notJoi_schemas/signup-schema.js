@@ -1,7 +1,7 @@
 const notJoi = require("../modules/schema-validator");
 
 const signupSchema = notJoi.object({
-  emailAddress: notJoi.string().trim().email().required(),
+  email: notJoi.string().trim().email().required(),
   username: notJoi.string().trim().min(3).max(35).required(),
   firstName: notJoi.string().trim().min(3).max(35).required(),
   lastName: notJoi.string().trim().min(3).max(35).required(),
