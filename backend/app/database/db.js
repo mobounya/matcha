@@ -1,9 +1,9 @@
 const { Client } = require("pg");
 const client = new Client({
-  user: process.env.DB_USER,
+  user: process.env.POSTGRES_USER,
   host: "matcha_db",
   database: "matcha_db",
-  password: process.env.DB_PASSWORD,
+  password: process.env.POSTGRES_PASSWORD,
   port: 5432
 });
 
@@ -11,13 +11,15 @@ client.connect();
 
 async function createUser(userData) {
   const query =
-    "INSERT INTO users(email, username, first_name, last_name, password) VALUES($1, $2, $3, $4, $5) RETURNING *";
+    "INSERT INTO users(email, username, first_name, last_name, password, is_active) VALUES($1, $2, $3, $4, $5, $6) RETURNING *";
+  const is_active = true;
   return client.query(query, [
     userData.email,
     userData.username,
     userData.firstName,
     userData.lastName,
-    userData.password
+    userData.password,
+    is_active
   ]);
 }
 

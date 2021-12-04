@@ -27,7 +27,19 @@ services:
       - ./backend/.env.db.dev
     networks:
       - backend-net
-      
+
+  matcha_adminer:
+    container_name: 'matcha_adminer'
+    image: adminer
+    ports:
+      - 9000:8080
+    links:
+      - "matcha_db:db"
+    depends_on:
+      - matcha_db
+    networks:
+      - backend-net
+    restart: always
 
 volumes:
   postgres-data:
