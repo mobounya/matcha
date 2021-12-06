@@ -67,6 +67,7 @@ class CustomValidator {
         return true;
       }
     });
+
     return returnValue;
   }
   _required() {
@@ -97,7 +98,7 @@ class CustomValidator {
       this.validators.push(trimString);
 
       function trimString(value) {
-        return value.trim();
+        return { value: value.trim() };
       }
 
       return this;
@@ -187,6 +188,7 @@ class CustomValidator {
         }
         return { value };
       }
+
       return this;
     }
 
