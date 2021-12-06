@@ -1,13 +1,24 @@
 # matcha
+Note: each env file will need a copy of an enviroment variable if required.
 
-## Env variables
+## Env variables for app [.env.app.*]
 
-| Name           | Required | Type      | Default value | Description                           |
-| -------------- | -------- | --------- | ------------- | ------------------------------------- |
-| `APP_PORT`     | true     | `integer` | -             | You can access the API from this port |
-| `ADMINER_PORT` | true     | `string`  | -             | Used to access Adminer from the web   |
-| `DB_USER`      | true     | `string`  | -             |                                       |
-| `DB_PASSWORD`  | true     | `string`  | -             |                                       |
+| Name                | Required | Type      | Default value | Description                                     |
+| --------------      | -------- | --------- | ------------- | ---------------------------------------------   |
+| `POSTGRES_USER`     | true     | `string`  | -             | Used to connect to the database service from pg |
+| `POSTGRES_PASSWORD` | true     | `string`  | -             | Used to connect to the database service from pg |
+
+## Env variables for database [.env.db.*]
+
+| Name                | Required | Type      | Default value | Description                                     |
+| --------------      | -------- | --------- | ------------- | ---------------------------------------------   |
+| `POSTGRES_USER`     | true     | `string`  | -             | postgres username                               |
+| `POSTGRES_PASSWORD` | true     | `string`  | -             | postgres password                               |
+
+
+## Documentation:
+
+You can find the documentation for this api here [[Documentation]](https://app.swaggerhub.com/apis-docs/amine.bounya20/matcha/1.0.0#/)
 
 ## Getting Started
 
