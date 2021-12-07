@@ -7,6 +7,9 @@ Note: each env file will need a copy of an enviroment variable if required.
 | --------------      | -------- | --------- | ------------- | ---------------------------------------------   |
 | `POSTGRES_USER`     | true     | `string`  | -             | Used to connect to the database service from pg |
 | `POSTGRES_PASSWORD` | true     | `string`  | -             | Used to connect to the database service from pg |
+| `POSTGRES_HOST`     | true     | `string`  | -             | Used to connect to the database service from pg |
+| `POSTGRES_DB`       | true     | `string`  | -             | Used to connect to the database service from pg |
+| `POSTGRES_PORT`     | true     | `number`  | -             | Used to connect to the database service from pg |
 
 ## Env variables for database [.env.db.*]
 
@@ -14,6 +17,7 @@ Note: each env file will need a copy of an enviroment variable if required.
 | --------------      | -------- | --------- | ------------- | ---------------------------------------------   |
 | `POSTGRES_USER`     | true     | `string`  | -             | postgres username                               |
 | `POSTGRES_PASSWORD` | true     | `string`  | -             | postgres password                               |
+| `POSTGRES_DB`       | true     | `string`  | -             | postgres database                               |
 
 
 ## Documentation:
