@@ -29,6 +29,8 @@ Note: each env file will need a copy of an enviroment variable if required.
 
 You can find the documentation for this api here [[Documentation]](https://app.swaggerhub.com/apis-docs/amine.bounya20/matcha/1.0.0#/)
 
+For setting up nodemailer with Gmail, use this tutorial: [[How to Use Nodemailer to Send Emails from Your Node.js Server]](https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/)
+
 ## Getting Started
 
 run the development server:
