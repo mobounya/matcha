@@ -56,7 +56,7 @@ async function checkIfAccountIsValid(request, response, next) {
 
 function generateEmailVerificationToken(email) {
   const payload = { email: email };
-  const secretKey = "T8gdesiAhRpGXYS8iVV9L5BXM";
+  const secretKey = process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY;
   const expiration = "1d";
   return jwtSignPayload(payload, secretKey, expiration);
 }

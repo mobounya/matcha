@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const defaultSecretKey = "LQ9YeFehRhLrd48tJiG5DEyTP";
+const defaultSecretKey = process.env.JWT_APP_SECRET_KEY;
 
 function jwtSignPayload(payload, secretKey, expiresIn) {
   return jwt.sign(payload, secretKey || defaultSecretKey, {
