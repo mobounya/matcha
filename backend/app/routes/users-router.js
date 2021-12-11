@@ -7,6 +7,8 @@ const {
 } = require("../middlewares/schema-validator");
 
 const { signupSchema } = require("../notJoi_schemas/signup-schema");
+const { verifyEmailSchema } = require("../notJoi_schemas/verify-email-schema");
+
 const userControllers = require("../controllers/user-controllers");
 const userMiddlewares = require("../middlewares/users-middlewares");
 
@@ -20,6 +22,12 @@ router.post(
   userMiddlewares.checkDuplicateEmail,
   userMiddlewares.hashPassword,
   userControllers.insertUser
+);
+
+router.post(
+  "/verify-account",
+  validateSchema(verifyEmailSchema, requestFields.BODY),
+  userMiddlewares.checkIfAccountIsValid
 );
 
 module.exports = router;
