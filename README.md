@@ -1,24 +1,35 @@
 # matcha
+
 Note: each env file will need a copy of an enviroment variable if required.
+
+MAIL_USERNAME=
+MAIL_PASSWORD=
+OAUTH_CLIENTID=
+OAUTH_CLIENT_SECRET=
+OAUTH_REFRESH_TOKEN=
 
 ## Env variables for app [.env.app.*]
 
-| Name                | Required | Type      | Default value | Description                                     |
-| --------------      | -------- | --------- | ------------- | ---------------------------------------------   |
-| `POSTGRES_USER`     | true     | `string`  | -             | Used to connect to the database service from pg |
-| `POSTGRES_PASSWORD` | true     | `string`  | -             | Used to connect to the database service from pg |
-| `POSTGRES_HOST`     | true     | `string`  | -             | Used to connect to the database service from pg |
-| `POSTGRES_DB`       | true     | `string`  | -             | Used to connect to the database service from pg |
-| `POSTGRES_PORT`     | true     | `number`  | -             | Used to connect to the database service from pg |
+| Name                  | Required | Type     | Default value | Scope      | Description                                     |
+| --------------------- | -------- | -------- | ------------- | ---------- | ----------------------------------------------- |
+| `POSTGRES_USER`       | true     | `string` | -             | pg         | Used to connect to the database service from pg |
+| `POSTGRES_PASSWORD`   | true     | `string` | -             | pg         | Used to connect to the database service from pg |
+| `POSTGRES_HOST`       | true     | `string` | -             | pg         | Used to connect to the database service from pg |
+| `POSTGRES_DB`         | true     | `string` | -             | pg         | Used to connect to the database service from pg |
+| `POSTGRES_PORT`       | true     | `number` | -             | pg         | Used to connect to the database service from pg |
+| `MAIL_USERNAME`       | true     | `string` | -             | nodemailer | used to send emails with gmail in nodemailer    |
+| `MAIL_PASSWORD`       | true     | `string` | -             | nodemailer | used to send emails with gmail in nodemailer    |
+| `OAUTH_CLIENTID`      | true     | `string` | -             | nodemailer | used to send emails with gmail in nodemailer    |
+| `OAUTH_CLIENT_SECRET` | true     | `string` | -             | nodemailer | used to send emails with gmail in nodemailer    |
+| `OAUTH_REFRESH_TOKEN` | true     | `string` | -             | nodemailer | used to send emails with gmail in nodemailer    |
 
 ## Env variables for database [.env.db.*]
 
-| Name                | Required | Type      | Default value | Description                                     |
-| --------------      | -------- | --------- | ------------- | ---------------------------------------------   |
-| `POSTGRES_USER`     | true     | `string`  | -             | postgres username                               |
-| `POSTGRES_PASSWORD` | true     | `string`  | -             | postgres password                               |
-| `POSTGRES_DB`       | true     | `string`  | -             | postgres database                               |
-
+| Name                | Required | Type     | Default value | Description       |
+| ------------------- | -------- | -------- | ------------- | ----------------- |
+| `POSTGRES_USER`     | true     | `string` | -             | postgres username |
+| `POSTGRES_PASSWORD` | true     | `string` | -             | postgres password |
+| `POSTGRES_DB`       | true     | `string` | -             | postgres database |
 
 ## Documentation:
 
