@@ -2,12 +2,6 @@
 
 Note: each env file will need a copy of an enviroment variable if required.
 
-MAIL_USERNAME=
-MAIL_PASSWORD=
-OAUTH_CLIENTID=
-OAUTH_CLIENT_SECRET=
-OAUTH_REFRESH_TOKEN=
-
 ## Env variables for app [.env.app.*]
 
 | Name                  | Required | Type     | Default value | Scope      | Description                                     |
