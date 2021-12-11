@@ -67,7 +67,7 @@ async function sendAccountVerificationEmail(request, response) {
     const token = await generateEmailVerificationToken(email);
     const address = request.hostname;
     const port = 3000;
-    const link = `http://${address}:${port}/token=${token}`;
+    const link = `http://${address}:${port}/users/verify-account?token=${token}`;
 
     const subject = "Please verify your email | matcha";
     const emailText = `Please <a href="${link}">click here</a> to verify your email`;
