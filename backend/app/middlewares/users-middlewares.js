@@ -1,6 +1,8 @@
 const db = require("../database/db");
 const httpStatus = require("../lib/http-status");
 const { bcryptHash } = require("../modules/bcrypt");
+const { jwtSignPayload } = require("../modules/jwt");
+const { sendMail } = require("../modules/nodemailer");
 
 async function checkDuplicateEmail(request, response, next) {
   try {
@@ -52,4 +54,39 @@ async function checkIfAccountIsValid(request, response, next) {
   }
 }
 
-module.exports = { checkDuplicateEmail, hashPassword, checkIfAccountIsValid };
+function generateEmailVerificationToken(email) {
+  const payload = { email: email };
+  const secretKey = "T8gdesiAhRpGXYS8iVV9L5BXM";
+  const expiration = "1d";
+  return jwtSignPayload(payload, secretKey, expiration);
+}
+
+async function sendAccountVerificationEmail(request, response) {
+  try {
+    const email = request.body.email;
+    const token = await generateEmailVerificationToken(email);
+    const address = request.hostname;
+    const port = 3000;
+    const link = `http://${address}:${port}/token=${token}`;
+
+    const subject = "Please verify your email | matcha";
+    const emailText = `Please <a href="${link}">click here</a> to verify your email`;
+
+    sendMail(email, subject, emailText).catch();
+
+    response.status(httpStatus.HTTP_OK).json({
+      message: "Email is sent"
+    });
+  } catch (e) {
+    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
+    });
+  }
+}
+
+module.exports = {
+  checkDuplicateEmail,
+  hashPassword,
+  checkIfAccountIsValid,
+  sendAccountVerificationEmail
+};

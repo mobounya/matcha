@@ -27,7 +27,8 @@ router.post(
 router.post(
   "/verify-account",
   validateSchema(verifyEmailSchema, requestFields.BODY),
-  userMiddlewares.checkIfAccountIsValid
+  userMiddlewares.checkIfAccountIsValid,
+  userMiddlewares.sendAccountVerificationEmail
 );
 
 module.exports = router;
