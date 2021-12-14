@@ -32,9 +32,9 @@ router.post(
   userMiddlewares.sendAccountVerificationEmail
 );
 
-router.get(
+router.post(
   "/verify-email",
-  validateSchema(tokenSchema, requestFields.QUERY),
+  validateSchema(tokenSchema, requestFields.BODY),
   userMiddlewares.verifyToken,
   userMiddlewares.checkIfAccountIsValid,
   userControllers.verifyEmail

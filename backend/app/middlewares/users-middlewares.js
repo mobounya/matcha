@@ -86,7 +86,7 @@ async function sendAccountVerificationEmail(request, response) {
 
 async function verifyToken(request, response, nexr) {
   try {
-    const token = request.query.token;
+    const token = request.body.token;
     const secretKey = process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY;
     const decodedPayload = await jwtVerifyToken(token, secretKey);
     request.body.email = decodedPayload.email;
