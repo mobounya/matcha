@@ -1,7 +1,7 @@
 const db = require("../database/db");
 const httpStatus = require("../lib/http-status");
 const { bcryptHash } = require("../modules/bcrypt");
-const { jwtSignPayload } = require("../modules/jwt");
+const { jwtSignPayload, jwtVerifyToken } = require("../modules/jwt");
 const { sendMail } = require("../modules/nodemailer");
 
 async function checkDuplicateEmail(request, response, next) {
@@ -84,9 +84,24 @@ async function sendAccountVerificationEmail(request, response) {
   }
 }
 
+async function verifyToken(request, response, nexr) {
+  try {
+    const token = request.query.token;
+    const secretKey = process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY;
+    const decodedPayload = await jwtVerifyToken(token, secretKey);
+    request.body.email = decodedPayload.email;
+    nexr();
+  } catch (e) {
+    response.status(httpStatus.HTTP_BAD_REQUEST).json({
+      error: "Invalid token"
+    });
+  }
+}
+
 module.exports = {
   checkDuplicateEmail,
   hashPassword,
   checkIfAccountIsValid,
-  sendAccountVerificationEmail
+  sendAccountVerificationEmail,
+  verifyToken
 };

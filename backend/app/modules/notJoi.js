@@ -51,7 +51,7 @@ class CustomValidator {
       }
     }
 
-    if (!typeValidator(val)) {
+    if (!typeValidator(val) && val != "") {
       return {
         value: val,
         error: `"value" must be a ${valueType}`
@@ -225,10 +225,10 @@ class CustomValidator {
 
       for (const [key, schemaValue] of Object.entries(schemaObj)) {
         // if it is on the schema object but not on the passed value.
-        if (schemaValue.isRequired && !value[key]) {
+        if (schemaValue.isRequired && value[key] != "" && !value[key]) {
           errors.push(`${key} is required`);
           continue;
-        } else if (!schemaValue.isRequired && !value[key]) {
+        } else if (!schemaValue.isRequired && value[key] != "" && !value[key]) {
           continue;
         }
 

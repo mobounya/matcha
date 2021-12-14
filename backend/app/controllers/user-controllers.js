@@ -1,4 +1,4 @@
-const { createUser } = require("../database/db");
+const { createUser, changeEmailVerifiedValue } = require("../database/db");
 const httpStatus = require("../lib/http-status");
 
 async function insertUser(request, response) {
@@ -15,4 +15,19 @@ async function insertUser(request, response) {
   }
 }
 
-module.exports = { insertUser };
+async function verifyEmail(request, response) {
+  try {
+    const email = request.body.email;
+    const isVerified = true;
+    await changeEmailVerifiedValue(email, isVerified);
+    response.status(httpStatus.HTTP_OK).json({
+      message: "email is verified"
+    });
+  } catch (error) {
+    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
+    });
+  }
+}
+
+module.exports = { insertUser, verifyEmail };

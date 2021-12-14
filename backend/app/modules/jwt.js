@@ -8,4 +8,8 @@ function jwtSignPayload(payload, secretKey, expiresIn) {
   });
 }
 
-module.exports = { jwtSignPayload };
+function jwtVerifyToken(token, secretKey) {
+  return jwt.verify(token, secretKey || defaultSecretKey);
+}
+
+module.exports = { jwtSignPayload, jwtVerifyToken };

@@ -4,7 +4,7 @@ const client = new Client({
   host: process.env.POSTGRES_HOST,
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
-  port: process.env.POSTGRES_PORT,
+  port: process.env.POSTGRES_PORT
 });
 
 client.connect();
@@ -28,4 +28,9 @@ async function getUserByEmail(email) {
   return client.query(query, [email]);
 }
 
-module.exports = { createUser, getUserByEmail };
+async function changeEmailVerifiedValue(email, isVerified) {
+  const query = "UPDATE users SET email_verified = $1 WHERE email = $2;";
+  return client.query(query, [isVerified, email]);
+}
+
+module.exports = { createUser, getUserByEmail, changeEmailVerifiedValue };
