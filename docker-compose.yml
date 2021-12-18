@@ -1,9 +1,8 @@
 version: "3.3"
 
 services:
-
   matcha_app:
-    container_name: 'matcha_app'
+    container_name: "matcha_app"
     restart: always
     depends_on:
       - matcha_db
@@ -19,7 +18,7 @@ services:
       - backend-net
 
   matcha_db:
-    container_name: 'matcha_db'
+    container_name: "matcha_db"
     image: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -29,7 +28,7 @@ services:
       - backend-net
 
   matcha_adminer:
-    container_name: 'matcha_adminer'
+    container_name: "matcha_adminer"
     image: adminer
     ports:
       - 9000:8080

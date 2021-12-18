@@ -1,28 +1,37 @@
 # matcha
+
 Note: each env file will need a copy of an enviroment variable if required.
 
 ## Env variables for app [.env.app.*]
 
-| Name                | Required | Type      | Default value | Description                                     |
-| --------------      | -------- | --------- | ------------- | ---------------------------------------------   |
-| `POSTGRES_USER`     | true     | `string`  | -             | Used to connect to the database service from pg |
-| `POSTGRES_PASSWORD` | true     | `string`  | -             | Used to connect to the database service from pg |
-| `POSTGRES_HOST`     | true     | `string`  | -             | Used to connect to the database service from pg |
-| `POSTGRES_DB`       | true     | `string`  | -             | Used to connect to the database service from pg |
-| `POSTGRES_PORT`     | true     | `number`  | -             | Used to connect to the database service from pg |
+| Name                                | Required | Type     | Default value | Scope        | Description                                                        |
+| ----------------------------------- | -------- | -------- | ------------- | ------------ | ------------------------------------------------------------------ |
+| `POSTGRES_USER`                     | true     | `string` | -             | pg           | Used to connect to the database service from pg                    |
+| `POSTGRES_PASSWORD`                 | true     | `string` | -             | pg           | Used to connect to the database service from pg                    |
+| `POSTGRES_HOST`                     | true     | `string` | -             | pg           | Used to connect to the database service from pg                    |
+| `POSTGRES_DB`                       | true     | `string` | -             | pg           | Used to connect to the database service from pg                    |
+| `POSTGRES_PORT`                     | true     | `number` | -             | pg           | Used to connect to the database service from pg                    |
+| `MAIL_USERNAME`                     | true     | `string` | -             | nodemailer   | used to send emails with gmail in nodemailer                       |
+| `MAIL_PASSWORD`                     | true     | `string` | -             | nodemailer   | used to send emails with gmail in nodemailer                       |
+| `OAUTH_CLIENTID`                    | true     | `string` | -             | nodemailer   | used to send emails with gmail in nodemailer                       |
+| `OAUTH_CLIENT_SECRET`               | true     | `string` | -             | nodemailer   | used to send emails with gmail in nodemailer                       |
+| `OAUTH_REFRESH_TOKEN`               | true     | `string` | -             | nodemailer   | used to send emails with gmail in nodemailer                       |
+| `JWT_APP_SECRET_KEY`                | true     | `string` | -             | jsonwebtoken | used to generate an access token                                   |
+| `JWT_EMAIL_VERIFICATION_SECRET_KEY` | true     | `string` | -             | jsonwebtoken | used to generate the token that will be sent in email verification |
 
 ## Env variables for database [.env.db.*]
 
-| Name                | Required | Type      | Default value | Description                                     |
-| --------------      | -------- | --------- | ------------- | ---------------------------------------------   |
-| `POSTGRES_USER`     | true     | `string`  | -             | postgres username                               |
-| `POSTGRES_PASSWORD` | true     | `string`  | -             | postgres password                               |
-| `POSTGRES_DB`       | true     | `string`  | -             | postgres database                               |
-
+| Name                | Required | Type     | Default value | Description       |
+| ------------------- | -------- | -------- | ------------- | ----------------- |
+| `POSTGRES_USER`     | true     | `string` | -             | postgres username |
+| `POSTGRES_PASSWORD` | true     | `string` | -             | postgres password |
+| `POSTGRES_DB`       | true     | `string` | -             | postgres database |
 
 ## Documentation:
 
 You can find the documentation for this api here [[Documentation]](https://app.swaggerhub.com/apis-docs/amine.bounya20/matcha/1.0.0#/)
+
+For setting up nodemailer with Gmail, use this tutorial: [[How to Use Nodemailer to Send Emails from Your Node.js Server]](https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/)
 
 ## Getting Started
 
