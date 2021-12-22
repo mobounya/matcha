@@ -36,22 +36,24 @@ async function hashPassword(request, response, next) {
   }
 }
 
-async function checkIfAccountIsValid(request, response, next) {
-  try {
-    const email = request.body.email;
-    const data = await db.getUserByEmail(email);
-    if (data.rowCount > 0) {
-      next();
-    } else {
-      response.status(httpStatus.HTTP_BAD_REQUEST).json({
-        error: "No account is associated with the email provided"
+function checkIfAccountIsValid(getEmail) {
+  return async (request, response, next) => {
+    try {
+      const email = getEmail(request);
+      const data = await db.getUserByEmail(email);
+      if (data.rowCount > 0) {
+        next();
+      } else {
+        response.status(httpStatus.HTTP_BAD_REQUEST).json({
+          error: "No account is associated with the email provided"
+        });
+      }
+    } catch (e) {
+      response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+        error: "something went wrong"
       });
     }
-  } catch (e) {
-    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
-      error: "something went wrong"
-    });
-  }
+  };
 }
 
 function generateEmailVerificationToken(email) {
@@ -61,12 +63,20 @@ function generateEmailVerificationToken(email) {
   return jwtSignPayload(payload, secretKey, expiration);
 }
 
+function generateResetPasswordToken(email) {
+  const payload = { email };
+  const secretKey = process.env.JWT_RESET_PASSWORD_SECRET_KEY;
+  const expiration = "1h";
+  return jwtSignPayload(payload, secretKey, expiration);
+}
+
 async function sendAccountVerificationEmail(request, response) {
   try {
     const email = request.body.email;
     const token = await generateEmailVerificationToken(email);
     const address = request.hostname;
     const port = 3000;
+    // need to change link later
     const link = `http://${address}:${port}/users/verify-account?token=${token}`;
 
     const subject = "Please verify your email | matcha";
@@ -75,7 +85,7 @@ async function sendAccountVerificationEmail(request, response) {
     sendMail(email, subject, emailText).catch();
 
     response.status(httpStatus.HTTP_OK).json({
-      message: "Email is sent"
+      message: "verification email is sent"
     });
   } catch (e) {
     response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
@@ -84,16 +94,26 @@ async function sendAccountVerificationEmail(request, response) {
   }
 }
 
-async function verifyToken(request, response, nexr) {
+async function sendResetPasswordVerificationEmail(request, response) {
   try {
-    const token = request.body.token;
-    const secretKey = process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY;
-    const decodedPayload = await jwtVerifyToken(token, secretKey);
-    request.body.email = decodedPayload.email;
-    nexr();
+    const email = request.body.email;
+    const token = await generateResetPasswordToken(email);
+    const address = request.hostname;
+    const port = 3000;
+    // need to change link later
+    const link = `http://${address}:${port}/users/reset-password?token=${token}`;
+
+    const subject = "Reset your password | matcha";
+    const emailText = `Please <a href="${link}">click here</a> to reset your password`;
+
+    sendMail(email, subject, emailText).catch();
+
+    response.status(httpStatus.HTTP_OK).json({
+      message: "reset password email is sent"
+    });
   } catch (e) {
-    response.status(httpStatus.HTTP_BAD_REQUEST).json({
-      error: "Invalid token"
+    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
     });
   }
 }
@@ -103,5 +123,5 @@ module.exports = {
   hashPassword,
   checkIfAccountIsValid,
   sendAccountVerificationEmail,
-  verifyToken
+  sendResetPasswordVerificationEmail
 };

@@ -1,4 +1,5 @@
 const { Client } = require("pg");
+
 const client = new Client({
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST,
@@ -9,7 +10,7 @@ const client = new Client({
 
 client.connect();
 
-async function createUser(userData) {
+function createUser(userData) {
   const query =
     "INSERT INTO users(email, username, first_name, last_name, password, is_active) VALUES($1, $2, $3, $4, $5, $6) RETURNING *";
   const is_active = true;
@@ -23,14 +24,24 @@ async function createUser(userData) {
   ]);
 }
 
-async function getUserByEmail(email) {
+function getUserByEmail(email) {
   const query = "SELECT * FROM users WHERE email = $1";
   return client.query(query, [email]);
 }
 
-async function changeEmailVerifiedValue(email, isVerified) {
+function changeEmailVerifiedValue(email, isVerified) {
   const query = "UPDATE users SET email_verified = $1 WHERE email = $2;";
   return client.query(query, [isVerified, email]);
 }
 
-module.exports = { createUser, getUserByEmail, changeEmailVerifiedValue };
+function changeUserPassword(email, newPassword) {
+  const query = "UPDATE users SET password = $1 WHERE email = $2";
+  return client.query(query, [newPassword, email]);
+}
+
+module.exports = {
+  createUser,
+  getUserByEmail,
+  changeEmailVerifiedValue,
+  changeUserPassword
+};
