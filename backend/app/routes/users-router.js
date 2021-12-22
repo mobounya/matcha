@@ -4,17 +4,24 @@ const router = express.Router();
 const {
   validateSchema,
   requestFields
-} = require("../middlewares/schema-validator");
+} = require("../middlewares/schema-validator-middleware");
 
 const { signupSchema } = require("../notJoi_schemas/signup-schema");
-const { verifyEmailSchema } = require("../notJoi_schemas/verify-email-schema");
 const { tokenSchema } = require("../notJoi_schemas/token-schema");
-const {
-  resetPasswordSchema
-} = require("../notJoi_schemas/reset-password-schema");
+const { emailSchema } = require("../notJoi_schemas/email-schema");
+const { passwordSchema } = require("../notJoi_schemas/password-schema");
 
 const userControllers = require("../controllers/user-controllers");
 const userMiddlewares = require("../middlewares/users-middlewares");
+const tokenValidatorMiddlewares = require("../middlewares/token-validator-middleware");
+
+function getEmailFromDecodedJwtPayload(request) {
+  return request.decodedPayload.email;
+}
+
+function getEmailFromBody(request) {
+  return request.body.email;
+}
 
 /*
   User routes
@@ -30,24 +37,40 @@ router.post(
 
 router.post(
   "/send-verification-email",
-  validateSchema(verifyEmailSchema, requestFields.BODY),
-  userMiddlewares.checkIfAccountIsValid,
+  validateSchema(emailSchema, requestFields.BODY),
+  userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
   userMiddlewares.sendAccountVerificationEmail
 );
 
 router.post(
   "/verify-email",
   validateSchema(tokenSchema, requestFields.BODY),
-  userMiddlewares.verifyToken,
-  userMiddlewares.checkIfAccountIsValid,
+  tokenValidatorMiddlewares.verifyToken(
+    process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY,
+    requestFields.BODY
+  ),
+  userMiddlewares.checkIfAccountIsValid(getEmailFromDecodedJwtPayload),
   userControllers.verifyEmail
 );
 
 router.post(
   "/send-reset-password-email",
-  validateSchema(resetPasswordSchema, requestFields.BODY),
-  userMiddlewares.checkIfAccountIsValid,
+  validateSchema(emailSchema, requestFields.BODY),
+  userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
   userMiddlewares.sendResetPasswordVerificationEmail
+);
+
+router.put(
+  "/reset-password",
+  validateSchema(tokenSchema, requestFields.QUERY),
+  tokenValidatorMiddlewares.verifyToken(
+    process.env.JWT_RESET_PASSWORD_SECRET_KEY,
+    requestFields.QUERY
+  ),
+  validateSchema(passwordSchema, requestFields.BODY),
+  userMiddlewares.checkIfAccountIsValid(getEmailFromDecodedJwtPayload),
+  userMiddlewares.hashPassword,
+  userControllers.changeUserPassword(getEmailFromDecodedJwtPayload)
 );
 
 module.exports = router;

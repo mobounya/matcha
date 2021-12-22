@@ -36,22 +36,24 @@ async function hashPassword(request, response, next) {
   }
 }
 
-async function checkIfAccountIsValid(request, response, next) {
-  try {
-    const email = request.body.email;
-    const data = await db.getUserByEmail(email);
-    if (data.rowCount > 0) {
-      next();
-    } else {
-      response.status(httpStatus.HTTP_BAD_REQUEST).json({
-        error: "No account is associated with the email provided"
+function checkIfAccountIsValid(getEmail) {
+  return async (request, response, next) => {
+    try {
+      const email = getEmail(request);
+      const data = await db.getUserByEmail(email);
+      if (data.rowCount > 0) {
+        next();
+      } else {
+        response.status(httpStatus.HTTP_BAD_REQUEST).json({
+          error: "No account is associated with the email provided"
+        });
+      }
+    } catch (e) {
+      response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+        error: "something went wrong"
       });
     }
-  } catch (e) {
-    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
-      error: "something went wrong"
-    });
-  }
+  };
 }
 
 function generateEmailVerificationToken(email) {
@@ -92,21 +94,7 @@ async function sendAccountVerificationEmail(request, response) {
   }
 }
 
-async function verifyToken(request, response, nexr) {
-  try {
-    const token = request.body.token;
-    const secretKey = process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY;
-    const decodedPayload = await jwtVerifyToken(token, secretKey);
-    request.body.email = decodedPayload.email;
-    nexr();
-  } catch (e) {
-    response.status(httpStatus.HTTP_BAD_REQUEST).json({
-      error: "Invalid token"
-    });
-  }
-}
-
-async function sendResetPasswordVerificationEmail(request, response, next) {
+async function sendResetPasswordVerificationEmail(request, response) {
   try {
     const email = request.body.email;
     const token = await generateResetPasswordToken(email);
@@ -135,6 +123,5 @@ module.exports = {
   hashPassword,
   checkIfAccountIsValid,
   sendAccountVerificationEmail,
-  sendResetPasswordVerificationEmail,
-  verifyToken
+  sendResetPasswordVerificationEmail
 };
