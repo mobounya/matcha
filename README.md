@@ -18,6 +18,7 @@ Note: each env file will need a copy of an enviroment variable if required.
 | `OAUTH_REFRESH_TOKEN`               | true     | `string` | -             | nodemailer   | used to send emails with gmail in nodemailer                       |
 | `JWT_APP_SECRET_KEY`                | true     | `string` | -             | jsonwebtoken | used to generate an access token                                   |
 | `JWT_EMAIL_VERIFICATION_SECRET_KEY` | true     | `string` | -             | jsonwebtoken | used to generate the token that will be sent in email verification |
+| `JWT_RESET_PASSWORD_SECRET_KEY`     | true     | `string` | -             | jsonwebtoken | used to generate the token that will be sent in reset password     |
 
 ## Env variables for database [.env.db.*]
 
