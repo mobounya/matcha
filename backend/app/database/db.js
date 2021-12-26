@@ -12,7 +12,7 @@ client.connect();
 
 function createUser(userData) {
     const query =
-        "INSERT INTO users(email, username, first_name, last_name, password, is_active) VALUES($1, $2, $3, $4, $5, $6) RETURNING email, username, first_name, last_name, is_active";
+        "INSERT INTO users(email, username, first_name, last_name, password, is_active) VALUES($1, $2, $3, $4, $5, $6) RETURNING *";
     const is_active = true;
     return client.query(query, [
         userData.email,
@@ -24,9 +24,14 @@ function createUser(userData) {
     ]);
 }
 
-function getUserByEmail(email) {
+async function getUserByEmail(email) {
     const query = "SELECT * FROM users WHERE email = $1";
-    return client.query(query, [email]);
+    const data = await client.query(query, [email]);
+    if (data.rowCount == 1) {
+        return data.rows[0]
+    } else {
+        return null
+    }
 }
 
 function changeEmailVerifiedValue(email, isVerified) {
