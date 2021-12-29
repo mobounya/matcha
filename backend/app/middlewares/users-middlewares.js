@@ -118,29 +118,38 @@ async function sendResetPasswordVerificationEmail(request, response) {
     }
 }
 
+
+// the req obj of the following middleware contains an additional user id property
 async function checkCredentials(req, res, next) {
     try {
         const email = req.body.email;
         const user = await db.getUserByEmail(email)
-        if (user) {
-            const hash = user.password;
-            const plainTextPassword = req.body.password;
-            bcryptCompare(plainTextPassword, hash, function isMatchPassword(err, matched) {
-                if (err) {
-                    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
-                        error: "something went wrong"
-                    });
-                }
-                if (!matched) {
-                    res.status(httpStatus.HTTP_UNAUTHORIZED).json({
-                        message: 'Auth fail'
-                    });
-                }
-                next()
-            })
+
+        if (!user) {
+            return res.status(httpStatus.HTTP_UNAUTHORIZED).json({
+                message: 'Auth fail'
+            });
         }
+
+        const hash = user.password;
+        const plainTextPassword = req.body.password;
+
+        bcryptCompare(plainTextPassword, hash, function isMatchPassword(err, matched) {
+            if (err) {
+                return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+                    error: "something went wrong"
+                });
+            }
+            if (!matched) {
+                return res.status(httpStatus.HTTP_UNAUTHORIZED).json({
+                    message: 'Auth fail'
+                });
+            }
+            req.user_id = user.user_id
+            next()
+        })
     } catch (e) {
-        res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+        return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
             error: "something went wrong"
         });
     }
