@@ -124,7 +124,7 @@ async function checkCredentials(req, res, next) {
     try {
         const email = req.body.email;
         const user = await db.getUserByEmail(email)
-
+        console.log(user)
         if (!user) {
             return res.status(httpStatus.HTTP_UNAUTHORIZED).json({
                 message: 'Auth fail'
@@ -145,7 +145,7 @@ async function checkCredentials(req, res, next) {
                     message: 'Auth fail'
                 });
             }
-            req.user_id = user.user_id
+            req.userId = user.user_id
             next()
         })
     } catch (e) {
