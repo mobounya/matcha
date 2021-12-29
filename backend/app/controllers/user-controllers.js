@@ -51,14 +51,14 @@
   async function sendAuthToken(req, res) {
       try {
           const token = req.token
-          const oneHourInSeconds = 60 * 60;
+          const oneHourInSeconds = 60 * 60 * 1000;
           res.cookie('token', token, {
               httpOnly: true,
-              sameSite: 'strict',
+              sameSite: true,
               maxAge: oneHourInSeconds,
               secure: process.env.NODE_ENV === 'production' ? true : false
           });
-          res.status(httpStatus.HTTP_OK).son({ message: "user authenticated successfully" });
+          res.status(httpStatus.HTTP_OK).json({ message: "user authenticated successfully" });
       } catch (e) {
           return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
               error: "something went wrong"
