@@ -58,7 +58,7 @@
               maxAge: oneHourInSeconds,
               secure: process.env.NODE_ENV === 'production' ? true : false
           });
-          res.json({ message: "user authenticated successfully" });
+          res.status(httpStatus.HTTP_OK).son({ message: "user authenticated successfully" });
       } catch (e) {
           return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
               error: "something went wrong"
