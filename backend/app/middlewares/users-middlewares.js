@@ -133,20 +133,16 @@ async function checkCredentials(req, res, next) {
         const hash = user.password;
         const plainTextPassword = req.body.password;
 
-        bcryptCompare(plainTextPassword, hash, function isMatchPassword(err, matched) {
-            if (err) {
-                return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
-                    error: "something went wrong"
-                });
-            }
-            if (!matched) {
-                return res.status(httpStatus.HTTP_UNAUTHORIZED).json({
-                    message: 'Auth fail'
-                });
-            }
-            req.userId = user.user_id
-            next()
-        })
+        const isMatched = await bcryptCompare(plainTextPassword, hash)
+
+        if (!isMatched) {
+            return res.status(httpStatus.HTTP_UNAUTHORIZED).json({
+                message: 'Auth fail'
+            });
+        }
+        req.userId = user.user_id
+        next()
+
     } catch (e) {
         return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
             error: "something went wrong"

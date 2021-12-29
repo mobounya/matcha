@@ -5,8 +5,8 @@ function bcryptHash(password) {
     return bcrypt.hash(password, saltRounds);
 }
 
-function bcryptCompare(plainPassword, hash, callback) {
-    return bcrypt.compare(plainPassword, hash, callback)
+function bcryptCompare(plainPassword, hash) {
+    return bcrypt.compare(plainPassword, hash)
 }
 
 module.exports = { bcryptHash, bcryptCompare };
