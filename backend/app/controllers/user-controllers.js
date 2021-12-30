@@ -51,11 +51,11 @@
   async function sendAuthToken(req, res) {
       try {
           const token = req.token
-          const oneHourInSeconds = 60 * 60 * 1000;
+          const oneHourInMilliseconds = 60 * 60 * 1000;
           res.cookie('token', token, {
               httpOnly: true,
               sameSite: true,
-              maxAge: oneHourInSeconds,
+              maxAge: oneHourInMilliseconds,
               secure: process.env.NODE_ENV === 'production' ? true : false
           });
           res.status(httpStatus.HTTP_OK).json({ message: "user authenticated successfully" });
