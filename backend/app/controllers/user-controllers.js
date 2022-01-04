@@ -70,11 +70,17 @@ async function sendAuthToken(req, res) {
 
 async function addUserProfile(request, response) {
   try {
-    const userId = 1;
+    const userId = request.jwtPayload.userId;
     const { gender, sexualPreference, biography } = request.body;
-    await db.addUserProfile(userId, gender, sexualPreference, biography);
+    const profile = await db.addUserProfile(
+      userId,
+      gender,
+      sexualPreference,
+      biography
+    );
     response.status(httpStatus.HTTP_CREATED).json({
-      message: "profile created"
+      message: "profile created",
+      data: profile.rows[0]
     });
   } catch (error) {
     response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
@@ -86,10 +92,10 @@ async function addUserProfile(request, response) {
 function checkDuplicateProfile(getUserId) {
   return async (request, response, next) => {
     try {
-      const userId = 1;
+      const userId = getUserId(request);
       const profile = await db.getUserProfile(userId);
       if (profile.rows.length > 0) {
-        response.status(httpStatus.HTTP_BAD_REQUEST).json({
+        return response.status(httpStatus.HTTP_CONFLICT).json({
           error: "profile already exist"
         });
       }

@@ -139,7 +139,7 @@ async function checkCredentials(req, res, next) {
         message: "Auth fail"
       });
     }
-    req.userId = user.user_id;
+    req.userId = user.id;
     next();
   } catch (e) {
     return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({

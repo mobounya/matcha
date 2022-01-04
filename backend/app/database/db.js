@@ -34,6 +34,16 @@ async function getUserByEmail(email) {
   }
 }
 
+async function getUserById(id) {
+  const query = "SELECT * FROM users WHERE id = $1";
+  const data = await client.query(query, [id]);
+  if (data.rowCount == 1) {
+    return data.rows[0];
+  } else {
+    return null;
+  }
+}
+
 function changeEmailVerifiedValue(email, isVerified) {
   const query = "UPDATE users SET email_verified = $1 WHERE email = $2;";
   return client.query(query, [isVerified, email]);
@@ -46,7 +56,7 @@ function changeUserPassword(email, newPassword) {
 
 function addUserProfile(userId, gender, sexualPreference, biography) {
   const query =
-    "INSERT INTO profiles(user_id, gender, sexual_preference, biography) VALUES($1, $2, $3, $4)";
+    "INSERT INTO profiles(user_id, gender, sexual_preference, biography) VALUES($1, $2, $3, $4) RETURNING *";
   return client.query(query, [userId, gender, sexualPreference, biography]);
 }
 
@@ -61,5 +71,6 @@ module.exports = {
   changeEmailVerifiedValue,
   changeUserPassword,
   addUserProfile,
-  getUserProfile
+  getUserProfile,
+  getUserById
 };

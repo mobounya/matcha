@@ -16,7 +16,7 @@ const { profileSchema } = require("../notJoi_schemas/profile-schema");
 const userControllers = require("../controllers/user-controllers");
 const userMiddlewares = require("../middlewares/users-middlewares");
 const tokenValidatorMiddlewares = require("../middlewares/token-validator-middleware");
-const authMiddleware = require("../middlewares/auth-middleware");
+const authMiddleware = require("../middlewares/auth-middlewares");
 
 function getEmailFromDecodedJwtPayload(request) {
   return request.decodedPayload.email;
@@ -33,7 +33,10 @@ function getEmailFromBody(request) {
 router.post(
   "/",
   validateSchema(profileSchema, requestFields.BODY),
-  userControllers.checkDuplicateProfile(null),
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  userControllers.checkDuplicateProfile((request) => {
+    return request.jwtPayload.userId;
+  }),
   userMiddlewares.validateProfileData,
   userControllers.addUserProfile
 );
