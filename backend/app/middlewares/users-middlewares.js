@@ -41,7 +41,7 @@ function checkIfAccountIsValid(getEmail) {
     try {
       const email = getEmail(request);
       const data = await db.getUserByEmail(email);
-      if (data.rowCount > 0) {
+      if (data) {
         next();
       } else {
         response.status(httpStatus.HTTP_BAD_REQUEST).json({
@@ -154,7 +154,7 @@ function validateProfileData(request, response, next) {
     ["female", "f"],
     ["male", "m"]
   ]);
-  const avaiableSexualPreferences = ["heterosexual", "homosexual", "bisexual"];
+  const availableSexualPreferences = ["heterosexual", "homosexual", "bisexual"];
   const gender = request.body.gender;
   const sexualPreference = request.body.sexualPreference;
   if (!availableGenders.get(gender)) {
@@ -163,7 +163,7 @@ function validateProfileData(request, response, next) {
       code: "INVALID_KEY"
     });
   }
-  if (!avaiableSexualPreferences.includes(sexualPreference)) {
+  if (!availableSexualPreferences.includes(sexualPreference)) {
     errors.push({
       key: "sexualPreference",
       code: "INVALID_KEY"
