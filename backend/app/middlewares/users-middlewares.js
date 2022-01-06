@@ -174,7 +174,7 @@ function validateProfileData(request, response, next) {
       errors: errors
     });
   } else {
-    // just to map a user supplied gender to a corresponding letter, we only store a letter in the databse, m for male, f for female.
+    // just to map a user supplied gender to a corresponding letter, we only store a letter in the database, m for male, f for female.
     request.body.gender = availableGenders.get(gender);
     next();
   }
