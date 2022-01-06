@@ -1,3 +1,6 @@
+CREATE TYPE sexual_preferences AS ENUM ('heterosexual', 'homosexual', 'bisexual');
+CREATE TYPE genders AS ENUM ('f', 'm');
+
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL NOT NULL PRIMARY KEY,
   first_name varchar(35) NOT NULL,
@@ -11,8 +14,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS profiles (
   id INT NOT NULL PRIMARY KEY,
-  gender CHARACTER NULL,
-  sexual_preference varchar(12) NULL,
+  gender genders NULL,
+  sexual_preference sexual_preferences NULL,
   biography TEXT NULL,
   profile_compeleted boolean DEFAULT 'f',
   FOREIGN KEY(id) REFERENCES users(id)
