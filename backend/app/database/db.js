@@ -56,12 +56,12 @@ function changeUserPassword(email, newPassword) {
 
 function addUserProfile(userId, gender, sexualPreference, biography) {
   const query =
-    "INSERT INTO profiles(user_id, gender, sexual_preference, biography) VALUES($1, $2, $3, $4) RETURNING *";
+    "INSERT INTO profiles(id, gender, sexual_preference, biography) VALUES($1, $2, $3, $4) RETURNING *";
   return client.query(query, [userId, gender, sexualPreference, biography]);
 }
 
 function getUserProfile(userId) {
-  const query = "SELECT * FROM profiles WHERE user_id = $1";
+  const query = "SELECT * FROM profiles WHERE id = $1";
   return client.query(query, [userId]);
 }
 

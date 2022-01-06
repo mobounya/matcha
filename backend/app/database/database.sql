@@ -10,11 +10,10 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS profiles (
-  id SERIAL NOT NULL PRIMARY KEY,
-  user_id INT,
+  id INT NOT NULL PRIMARY KEY,
   gender CHARACTER NULL,
   sexual_preference varchar(12) NULL,
   biography TEXT NULL,
   profile_compeleted boolean DEFAULT 'f',
-  FOREIGN KEY(user_id) REFERENCES users(id)
+  FOREIGN KEY(id) REFERENCES users(id)
 );
