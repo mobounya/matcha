@@ -20,7 +20,7 @@ class CustomValidator {
       if (typeof value != "string") {
         return false;
       }
-      return value;
+      return true;
     }
 
     function isObject(value) {
@@ -59,7 +59,7 @@ class CustomValidator {
       }
     }
 
-    if (!typeValidator(val) && val != "") {
+    if (!typeValidator(val)) {
       return {
         value: val,
         error: `"value" must be a ${valueType}`
