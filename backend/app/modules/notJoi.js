@@ -44,7 +44,7 @@ class CustomValidator {
     ]);
   }
   _validate(val) {
-    var returnValue = {};
+    var returnValue = { value: val };
     const valueType = this.type;
     const typeValidator = this.types.get(valueType);
 
@@ -280,7 +280,6 @@ class CustomValidator {
       }
 
       Object.keys(value).forEach((key) => {
-        validate;
         errors.push(`${key} is not allowed`);
       });
 
