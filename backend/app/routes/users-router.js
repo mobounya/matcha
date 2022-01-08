@@ -46,7 +46,8 @@ router.post(
   "/tags",
   authMiddleware.auth(authMiddleware.getTokenFromCookie),
   validateSchema(tagsSchema, requestFields.BODY),
-  userMiddlewares.removeDuplicateTags
+  userMiddlewares.removeDuplicateTags,
+  userMiddlewares.validateTags
 );
 
 router.post(

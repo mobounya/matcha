@@ -116,8 +116,31 @@ function validateProfileData(request, response, next) {
   }
 }
 
+function validateTags(request, response, next) {
+  var error = null;
+  const tags = request.body.tags;
+
+  tags.find((tag) => {
+    if (tag.length < 1) {
+      error = `a tag cannot be empty`;
+      return true;
+    } else if (tag.length > 10) {
+      error = "a tag cannot be more than 10 characters";
+      return true;
+    }
+  });
+
+  if (error) {
+    response.status(httpStatus.HTTP_BAD_REQUEST).json({
+      error: error
+    });
+  } else {
+    next();
+  }
+}
+
 function removeDuplicateTags(request, response, next) {
-  const tags = request.body.tags.sort();
+  const tags = request.body.tags;
   const uniqueTags = [];
   tags.forEach((tag) => {
     const found = uniqueTags.find((uniqueTag) => {
@@ -139,5 +162,6 @@ module.exports = {
   sendResetPasswordVerificationEmail,
   validateProfileData,
   checkCredentials,
-  removeDuplicateTags
+  removeDuplicateTags,
+  validateTags
 };
