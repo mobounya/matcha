@@ -41,6 +41,8 @@ router.post(
     userControllers.addUserProfile
 );
 
+router.post("/tags", authMiddleware.auth(authMiddleware.getTokenFromCookie));
+
 router.post(
     "/signin",
     validateSchema(signinSchema, requestFields.BODY),
