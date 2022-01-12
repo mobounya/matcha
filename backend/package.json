@@ -35,6 +35,6 @@
     "pg": "^8.7.1"
   },
   "lint-staged": {
-    "*.js": "echo wa hya 7amiiiiid && exit 1"
+    "*.js": "prettier --write"
   }
 }
