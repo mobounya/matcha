@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "prepare": "cd .. && husky install backend/.husky",
+    "test": "echo husky test"
   },
   "repository": {
     "type": "git",
