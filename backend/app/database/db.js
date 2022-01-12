@@ -65,6 +65,73 @@ function getUserProfile(userId) {
   return client.query(query, [userId]);
 }
 
+function addTags(tags) {
+  const query = generateAddTagQuery(tags.length, true);
+  return client.query(query, tags);
+
+  function generateAddTagQuery(size, toReturn) {
+    var query = "INSERT INTO tags(tag) VALUES";
+
+    for (let i = 1; i <= size; i++) {
+      let value = `($${i})`;
+      if (i != size) {
+        value += ",";
+      } else {
+        value += " ON CONFLICT DO NOTHING";
+        value += toReturn ? " RETURNING *" : "";
+        value += ";";
+      }
+      query += value;
+    }
+
+    return query;
+  }
+}
+
+function getTags(tags) {
+  const query = generateGetTagsQuery(tags.length);
+
+  return client.query(query, tags);
+
+  function generateGetTagsQuery(size) {
+    var query = "SELECT * FROM tags WHERE ";
+    for (let i = 1; i <= tags.length; i++) {
+      let value = `tag = $${i}`;
+      if (i == size) {
+        value += ";";
+      } else {
+        value += " OR ";
+      }
+      query += value;
+    }
+    return query;
+  }
+}
+
+function addUserTags(userId, tags) {
+  const query = generateAddUserTagsQuery(tags.length, true);
+
+  return client.query(query, [userId, ...tags]);
+
+  function generateAddUserTagsQuery(size, toReturn) {
+    var query = "INSERT INTO user_tags(user_id, tag_id) VALUES";
+
+    for (let i = 2; i <= size + 1; i++) {
+      let value = ` ($1, $${i})`;
+      if (i != size + 1) {
+        value += ",";
+      } else {
+        value += " ON CONFLICT DO NOTHING";
+        value += toReturn ? " RETURNING *" : "";
+        value += ";";
+      }
+      query += value;
+    }
+
+    return query;
+  }
+}
+
 module.exports = {
   createUser,
   getUserByEmail,
@@ -72,5 +139,8 @@ module.exports = {
   changeUserPassword,
   addUserProfile,
   getUserProfile,
-  getUserById
+  getUserById,
+  addTags,
+  getTags,
+  addUserTags
 };
