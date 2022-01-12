@@ -79,7 +79,7 @@ router.post(
     "/send-reset-password-email",
     validateSchema(emailSchema, requestFields.BODY),
     userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
-    userControllers.sendResetPasswordVerificationEmail
+    userControllers.sendResetPasswordEmail
 );
 
 router.put(

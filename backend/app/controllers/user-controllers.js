@@ -148,7 +148,7 @@ async function sendAccountVerificationEmail(request, response) {
     }
 }
 
-async function sendResetPasswordVerificationEmail(request, response) {
+async function sendResetPasswordEmail(request, response) {
     try {
         const email = request.body.email;
         const token = await generateResetPasswordToken(email);
@@ -180,6 +180,6 @@ module.exports = {
     addUserProfile,
     checkDuplicateProfile,
     sendAuthToken,
-    sendResetPasswordVerificationEmail,
+    sendResetPasswordEmail,
     sendAccountVerificationEmail
 };
