@@ -61,7 +61,7 @@ router.post(
     "/send-verification-email",
     validateSchema(emailSchema, requestFields.BODY),
     userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
-    userMiddlewares.sendAccountVerificationEmail
+    userControllers.sendAccountVerificationEmail
 );
 
 router.patch(
@@ -79,7 +79,7 @@ router.post(
     "/send-reset-password-email",
     validateSchema(emailSchema, requestFields.BODY),
     userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
-    userMiddlewares.sendResetPasswordVerificationEmail
+    userControllers.sendResetPasswordEmail
 );
 
 router.put(
