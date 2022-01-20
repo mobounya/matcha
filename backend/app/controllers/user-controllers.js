@@ -174,7 +174,7 @@ async function sendResetPasswordEmail(request, response) {
 
 async function addUserTags(request, response) {
   const suppliedTags = request.body.tags;
-  const userId = request.payload.id;
+  const userId = request.jwtPayload.userId;
   try {
     await db.addTags(suppliedTags);
     const tags = await db.getTags(suppliedTags);
