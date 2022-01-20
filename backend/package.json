@@ -19,6 +19,7 @@
   "homepage": "https://github.com/mobounya/matcha#readme",
   "devDependencies": {
     "chokidar": "^3.5.2",
+    "eslint": "^8.7.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1"
   },
