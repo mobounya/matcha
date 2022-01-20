@@ -207,7 +207,7 @@ function editProfile(getUserId) {
       );
       response.status(httpStatus.HTTP_OK).json({
         message: "Profile edited successfully",
-        data: profile
+        data: profile.rows
       });
     } catch (e) {
       console.log(e);
