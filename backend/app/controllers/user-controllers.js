@@ -174,13 +174,14 @@ async function sendResetPasswordEmail(request, response) {
 
 async function addUserTags(request, response) {
   const suppliedTags = request.body.tags;
+  const userId = request.payload.id;
   try {
     await db.addTags(suppliedTags);
     const tags = await db.getTags(suppliedTags);
     const tagIds = tags.rows.map((tag) => {
       return tag.id;
     });
-    const userTags = await db.addUserTags(1, tagIds);
+    const userTags = await db.addUserTags(userId, tagIds);
     response.status(httpStatus.HTTP_CREATED).json({
       message: "tags created",
       data: userTags.rows
