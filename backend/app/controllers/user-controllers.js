@@ -210,7 +210,6 @@ function editProfile(getUserId) {
         data: profile.rows
       });
     } catch (e) {
-      console.log(e);
       response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
         error: "something went wrong"
       });
