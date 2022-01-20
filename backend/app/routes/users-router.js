@@ -27,6 +27,10 @@ function getEmailFromBody(request) {
   return request.body.email;
 }
 
+function getuserIdFromJwtPayload(request) {
+  return request.jwtPayload.userId;
+}
+
 /*
   User routes
 */
@@ -45,7 +49,9 @@ router.post(
 router.put(
   "/",
   authMiddleware.auth(authMiddleware.getTokenFromCookie),
-  validateSchema(profileSchema, requestFields.BODY)
+  validateSchema(profileSchema, requestFields.BODY),
+  userMiddlewares.validateProfileData,
+  userMiddlewares.checkIfProfileExist(getuserIdFromJwtPayload)
 );
 
 router.post(
