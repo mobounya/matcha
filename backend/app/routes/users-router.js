@@ -51,7 +51,8 @@ router.put(
   authMiddleware.auth(authMiddleware.getTokenFromCookie),
   validateSchema(profileSchema, requestFields.BODY),
   userMiddlewares.validateProfileData,
-  userMiddlewares.checkIfProfileExist(getuserIdFromJwtPayload)
+  userMiddlewares.checkIfProfileExist(getuserIdFromJwtPayload),
+  userControllers.editProfile(getuserIdFromJwtPayload)
 );
 
 router.post(

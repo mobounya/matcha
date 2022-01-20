@@ -58,7 +58,7 @@ async function sendAuthToken(req, res) {
       httpOnly: true,
       sameSite: true,
       maxAge: oneHourInMilliseconds,
-      secure: process.env.NODE_ENV === "production" ? true : false
+      secure: process.env.NODE_ENV === "production"
     });
     res
       .status(httpStatus.HTTP_OK)
@@ -193,6 +193,31 @@ async function addUserTags(request, response) {
   }
 }
 
+function editProfile(getUserId) {
+  return async (request, response) => {
+    const userId = getUserId(request);
+    try {
+      const profile = await db.editUserProfile(
+        {
+          gender: request.body.gender,
+          sexualPreference: request.body.sexualPreference,
+          biography: request.body.biography
+        },
+        userId
+      );
+      response.status(httpStatus.HTTP_OK).json({
+        message: "Profile edited successfully",
+        data: profile
+      });
+    } catch (e) {
+      console.log(e);
+      response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+        error: "something went wrong"
+      });
+    }
+  };
+}
+
 module.exports = {
   insertUser,
   verifyEmail,
@@ -202,5 +227,6 @@ module.exports = {
   sendAuthToken,
   addUserTags,
   sendResetPasswordEmail,
-  sendAccountVerificationEmail
+  sendAccountVerificationEmail,
+  editProfile
 };
