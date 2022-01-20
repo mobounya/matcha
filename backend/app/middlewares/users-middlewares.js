@@ -158,8 +158,6 @@ module.exports = {
   checkDuplicateEmail,
   hashPassword,
   checkIfAccountIsValid,
-  sendAccountVerificationEmail,
-  sendResetPasswordVerificationEmail,
   validateProfileData,
   checkCredentials,
   removeDuplicateTags,
