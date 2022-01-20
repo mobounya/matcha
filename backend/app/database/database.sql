@@ -12,6 +12,20 @@ CREATE TABLE IF NOT EXISTS users (
   is_active boolean DEFAULT 'f'
 );
 
+CREATE TABLE IF NOT EXISTS tags (
+  id SERIAL NOT NULL PRIMARY KEY,
+  tag varchar(10) UNIQUE NOT NULL
+)
+
+CREATE TABLE IF NOT EXISTS user_tags (
+  id SERIAL NOT NULL PRIMARY KEY,
+  user_id INT NOT NULL,
+  tag_id INT NOT NULL,
+  FOREIGN KEY(user_id) REFERENCES users(id),
+  FOREIGN KEY(tag_id) REFERENCES tags(id),
+  UNIQUE (user_id, tag_id)
+)
+
 CREATE TABLE IF NOT EXISTS profiles (
   id INT NOT NULL PRIMARY KEY,
   gender genders NULL,

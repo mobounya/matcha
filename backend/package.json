@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon",
-    "prepare": "husky install"
+    "dev": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -20,9 +19,6 @@
   "homepage": "https://github.com/mobounya/matcha#readme",
   "devDependencies": {
     "chokidar": "^3.5.2",
-    "eslint": "^8.3.0",
-    "husky": "^7.0.4",
-    "lint-staged": "^12.1.2",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.0"
   },
@@ -35,9 +31,5 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.7.2",
     "pg": "^8.7.1"
-  },
-  "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
   }
 }

@@ -12,6 +12,7 @@ const { tokenSchema } = require("../notJoi_schemas/token-schema");
 const { emailSchema } = require("../notJoi_schemas/email-schema");
 const { passwordSchema } = require("../notJoi_schemas/password-schema");
 const { profileSchema } = require("../notJoi_schemas/profile-schema");
+const { tagsSchema } = require("../notJoi_schemas/tags-schema");
 
 const userControllers = require("../controllers/user-controllers");
 const userMiddlewares = require("../middlewares/users-middlewares");
@@ -39,6 +40,15 @@ router.post(
     }),
     userMiddlewares.validateProfileData,
     userControllers.addUserProfile
+);
+
+router.post(
+  "/tags",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  validateSchema(tagsSchema, requestFields.BODY),
+  userMiddlewares.removeDuplicateTags,
+  userMiddlewares.validateTags,
+  userControllers.addUserTags
 );
 
 router.post(
