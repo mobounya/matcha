@@ -178,7 +178,7 @@ async function addUserTags(request, response) {
   try {
     await db.addTags(suppliedTags);
     const tags = await db.getTags(suppliedTags);
-    const tagIds = tags.rows.map((tag) => {
+    const tagIds = tags.map((tag) => {
       return tag.id;
     });
     const userTags = await db.addUserTags(userId, tagIds);
@@ -222,8 +222,8 @@ async function removeTags(request, response) {
   const userId = request.jwtPayload.userId;
   try {
     const tags = await db.getTags(suppliderTags);
-    if (tags.rowCount > 0) {
-      const tagIds = tags.rows.map(function getTagId(tag) {
+    if (tags) {
+      const tagIds = tags.map(function getTagId(tag) {
         return tag.id;
       });
       await db.deleteUserTags(tagIds, userId);

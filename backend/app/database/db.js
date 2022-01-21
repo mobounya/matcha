@@ -99,10 +99,16 @@ function addTags(tags) {
   }
 }
 
-function getTags(tags) {
+async function getTags(tags) {
   const query = generateGetTagsQuery(tags.length);
 
-  return client.query(query, tags);
+  const returnedTags = await client.query(query, tags);
+
+  if (returnedTags.rowCount > 0) {
+    return returnedTags.rows;
+  } else {
+    return null;
+  }
 
   function generateGetTagsQuery(size) {
     let query = "SELECT * FROM tags WHERE ";
