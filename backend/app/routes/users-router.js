@@ -64,6 +64,15 @@ router.post(
   userControllers.addUserTags
 );
 
+router.patch(
+  "/tags",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  validateSchema(tagsSchema, requestFields.BODY),
+  userMiddlewares.removeDuplicateTags,
+  userMiddlewares.validateTags,
+  userControllers.removeTags
+);
+
 router.post(
   "/signin",
   validateSchema(signinSchema, requestFields.BODY),
