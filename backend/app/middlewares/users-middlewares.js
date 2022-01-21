@@ -21,6 +21,26 @@ async function checkDuplicateEmail(request, response, next) {
   }
 }
 
+function checkIfProfileExist(getUserId) {
+  return async (request, response, next) => {
+    try {
+      const userId = getUserId(request);
+      const profile = await db.getUserProfile(userId);
+      if (profile.rows.length > 0) {
+        next();
+      } else {
+        return response.status(httpStatus.HTTP_UNPROCESSABLE_ENTITY).json({
+          error: "user does not have a profile"
+        });
+      }
+    } catch (e) {
+      response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+        error: "something went wrong"
+      });
+    }
+  };
+}
+
 async function hashPassword(request, response, next) {
   try {
     const password = request.body.password;
@@ -117,17 +137,18 @@ function validateProfileData(request, response, next) {
 }
 
 function validateTags(request, response, next) {
-  var error = null;
+  let error = null;
   const tags = request.body.tags;
 
   tags.find((tag) => {
     if (tag.length < 1) {
-      error = `a tag cannot be empty`;
+      error = "a tag cannot be empty";
       return true;
     } else if (tag.length > 10) {
       error = "a tag cannot be more than 10 characters";
       return true;
     }
+    return false;
   });
 
   if (error) {
@@ -161,5 +182,6 @@ module.exports = {
   validateProfileData,
   checkCredentials,
   removeDuplicateTags,
-  validateTags
+  validateTags,
+  checkIfProfileExist
 };

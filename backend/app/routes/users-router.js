@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const {
-    validateSchema,
-    requestFields
+  validateSchema,
+  requestFields
 } = require("../middlewares/schema-validator-middleware");
 
 const { signupSchema } = require("../notJoi_schemas/signup-schema");
@@ -20,11 +20,15 @@ const tokenValidatorMiddlewares = require("../middlewares/token-validator-middle
 const authMiddleware = require("../middlewares/auth-middlewares");
 
 function getEmailFromDecodedJwtPayload(request) {
-    return request.decodedPayload.email;
+  return request.decodedPayload.email;
 }
 
 function getEmailFromBody(request) {
-    return request.body.email;
+  return request.body.email;
+}
+
+function getuserIdFromJwtPayload(request) {
+  return request.jwtPayload.userId;
 }
 
 /*
@@ -32,14 +36,23 @@ function getEmailFromBody(request) {
 */
 
 router.post(
-    "/",
-    validateSchema(profileSchema, requestFields.BODY),
-    authMiddleware.auth(authMiddleware.getTokenFromCookie),
-    userControllers.checkDuplicateProfile((request) => {
-        return request.jwtPayload.userId;
-    }),
-    userMiddlewares.validateProfileData,
-    userControllers.addUserProfile
+  "/",
+  validateSchema(profileSchema, requestFields.BODY),
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  userControllers.checkDuplicateProfile((request) => {
+    return request.jwtPayload.userId;
+  }),
+  userMiddlewares.validateProfileData,
+  userControllers.addUserProfile
+);
+
+router.put(
+  "/",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  validateSchema(profileSchema, requestFields.BODY),
+  userMiddlewares.validateProfileData,
+  userMiddlewares.checkIfProfileExist(getuserIdFromJwtPayload),
+  userControllers.editProfile(getuserIdFromJwtPayload)
 );
 
 router.post(
@@ -52,57 +65,57 @@ router.post(
 );
 
 router.post(
-    "/signin",
-    validateSchema(signinSchema, requestFields.BODY),
-    userMiddlewares.checkCredentials,
-    authMiddleware.generateToken,
-    userControllers.sendAuthToken
+  "/signin",
+  validateSchema(signinSchema, requestFields.BODY),
+  userMiddlewares.checkCredentials,
+  authMiddleware.generateToken,
+  userControllers.sendAuthToken
 );
 
 router.post(
-    "/signup",
-    validateSchema(signupSchema, requestFields.BODY),
-    userMiddlewares.checkDuplicateEmail,
-    userMiddlewares.hashPassword,
-    userControllers.insertUser
+  "/signup",
+  validateSchema(signupSchema, requestFields.BODY),
+  userMiddlewares.checkDuplicateEmail,
+  userMiddlewares.hashPassword,
+  userControllers.insertUser
 );
 
 router.post(
-    "/send-verification-email",
-    validateSchema(emailSchema, requestFields.BODY),
-    userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
-    userControllers.sendAccountVerificationEmail
+  "/send-verification-email",
+  validateSchema(emailSchema, requestFields.BODY),
+  userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
+  userControllers.sendAccountVerificationEmail
 );
 
 router.patch(
-    "/verify-email",
-    validateSchema(tokenSchema, requestFields.BODY),
-    tokenValidatorMiddlewares.verifyToken(
-        process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY,
-        requestFields.BODY
-    ),
-    userMiddlewares.checkIfAccountIsValid(getEmailFromDecodedJwtPayload),
-    userControllers.verifyEmail
+  "/verify-email",
+  validateSchema(tokenSchema, requestFields.BODY),
+  tokenValidatorMiddlewares.verifyToken(
+    process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY,
+    requestFields.BODY
+  ),
+  userMiddlewares.checkIfAccountIsValid(getEmailFromDecodedJwtPayload),
+  userControllers.verifyEmail
 );
 
 router.post(
-    "/send-reset-password-email",
-    validateSchema(emailSchema, requestFields.BODY),
-    userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
-    userControllers.sendResetPasswordEmail
+  "/send-reset-password-email",
+  validateSchema(emailSchema, requestFields.BODY),
+  userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
+  userControllers.sendResetPasswordEmail
 );
 
 router.put(
-    "/reset-password",
-    validateSchema(tokenSchema, requestFields.QUERY),
-    tokenValidatorMiddlewares.verifyToken(
-        process.env.JWT_RESET_PASSWORD_SECRET_KEY,
-        requestFields.QUERY
-    ),
-    validateSchema(passwordSchema, requestFields.BODY),
-    userMiddlewares.checkIfAccountIsValid(getEmailFromDecodedJwtPayload),
-    userMiddlewares.hashPassword,
-    userControllers.changeUserPassword(getEmailFromDecodedJwtPayload)
+  "/reset-password",
+  validateSchema(tokenSchema, requestFields.QUERY),
+  tokenValidatorMiddlewares.verifyToken(
+    process.env.JWT_RESET_PASSWORD_SECRET_KEY,
+    requestFields.QUERY
+  ),
+  validateSchema(passwordSchema, requestFields.BODY),
+  userMiddlewares.checkIfAccountIsValid(getEmailFromDecodedJwtPayload),
+  userMiddlewares.hashPassword,
+  userControllers.changeUserPassword(getEmailFromDecodedJwtPayload)
 );
 
 module.exports = router;

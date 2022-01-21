@@ -13,14 +13,14 @@ client.connect();
 function createUser(userData) {
   const query =
     "INSERT INTO users(email, username, first_name, last_name, password, is_active) VALUES($1, $2, $3, $4, $5, $6) RETURNING *";
-  const is_active = true;
+  const isActive = true;
   return client.query(query, [
     userData.email,
     userData.username,
     userData.firstName,
     userData.lastName,
     userData.password,
-    is_active
+    isActive
   ]);
 }
 
@@ -65,12 +65,23 @@ function getUserProfile(userId) {
   return client.query(query, [userId]);
 }
 
+function editUserProfile(profile, userId) {
+  const query =
+    "UPDATE profiles SET (gender, sexual_preference, biography) = ($1, $2, $3) WHERE id = $4 RETURNING *";
+  return client.query(query, [
+    profile.gender,
+    profile.sexualPreference,
+    profile.biography,
+    userId
+  ]);
+}
+
 function addTags(tags) {
   const query = generateAddTagQuery(tags.length, true);
   return client.query(query, tags);
 
   function generateAddTagQuery(size, toReturn) {
-    var query = "INSERT INTO tags(tag) VALUES";
+    let query = "INSERT INTO tags(tag) VALUES";
 
     for (let i = 1; i <= size; i++) {
       let value = `($${i})`;
@@ -94,7 +105,7 @@ function getTags(tags) {
   return client.query(query, tags);
 
   function generateGetTagsQuery(size) {
-    var query = "SELECT * FROM tags WHERE ";
+    let query = "SELECT * FROM tags WHERE ";
     for (let i = 1; i <= tags.length; i++) {
       let value = `tag = $${i}`;
       if (i == size) {
@@ -114,7 +125,7 @@ function addUserTags(userId, tags) {
   return client.query(query, [userId, ...tags]);
 
   function generateAddUserTagsQuery(size, toReturn) {
-    var query = "INSERT INTO user_tags(user_id, tag_id) VALUES";
+    let query = "INSERT INTO user_tags(user_id, tag_id) VALUES";
 
     for (let i = 2; i <= size + 1; i++) {
       let value = ` ($1, $${i})`;
@@ -142,5 +153,6 @@ module.exports = {
   getUserById,
   addTags,
   getTags,
-  addUserTags
+  addUserTags,
+  editUserProfile
 };
