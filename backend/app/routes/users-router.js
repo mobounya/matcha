@@ -73,6 +73,12 @@ router.patch(
   userControllers.removeTags
 );
 
+router.get(
+  "/tags",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  userControllers.getUserTags
+);
+
 router.post(
   "/signin",
   validateSchema(signinSchema, requestFields.BODY),
