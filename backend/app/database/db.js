@@ -169,6 +169,13 @@ function deleteUserTags(tags, userId) {
   }
 }
 
+async function fetchUserTags(userId) {
+  const query =
+    "SELECT tags.id, tags.tag FROM tags INNER JOIN user_tags ON tags.id = user_tags.tag_id WHERE user_tags.user_id = $1";
+  const userTags = await client.query(query, [userId]);
+  return userTags.rows;
+}
+
 module.exports = {
   createUser,
   getUserByEmail,
@@ -181,5 +188,6 @@ module.exports = {
   getTags,
   addUserTags,
   editUserProfile,
-  deleteUserTags
+  deleteUserTags,
+  fetchUserTags
 };
