@@ -27,7 +27,7 @@ function getEmailFromBody(request) {
   return request.body.email;
 }
 
-function getuserIdFromJwtPayload(request) {
+function getUserIdFromJwtPayload(request) {
   return request.jwtPayload.userId;
 }
 
@@ -51,8 +51,8 @@ router.put(
   authMiddleware.auth(authMiddleware.getTokenFromCookie),
   validateSchema(profileSchema, requestFields.BODY),
   userMiddlewares.validateProfileData,
-  userMiddlewares.checkIfProfileExist(getuserIdFromJwtPayload),
-  userControllers.editProfile(getuserIdFromJwtPayload)
+  userMiddlewares.checkIfProfileExist(getUserIdFromJwtPayload),
+  userControllers.editProfile(getUserIdFromJwtPayload)
 );
 
 router.post(
