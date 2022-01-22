@@ -178,7 +178,7 @@ async function addUserTags(request, response) {
   try {
     await db.addTags(suppliedTags);
     const tags = await db.getTags(suppliedTags);
-    const tagIds = tags.rows.map((tag) => {
+    const tagIds = tags.map((tag) => {
       return tag.id;
     });
     const userTags = await db.addUserTags(userId, tagIds);
@@ -217,6 +217,27 @@ function editProfile(getUserId) {
   };
 }
 
+async function removeTags(request, response) {
+  const suppliderTags = request.body.tags;
+  const userId = request.jwtPayload.userId;
+  try {
+    const tags = await db.getTags(suppliderTags);
+    if (tags) {
+      const tagIds = tags.map(function getTagId(tag) {
+        return tag.id;
+      });
+      await db.deleteUserTags(tagIds, userId);
+    }
+    response.status(httpStatus.HTTP_OK).json({
+      message: "tags removed successfully"
+    });
+  } catch (e) {
+    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
+    });
+  }
+}
+
 module.exports = {
   insertUser,
   verifyEmail,
@@ -227,5 +248,6 @@ module.exports = {
   addUserTags,
   sendResetPasswordEmail,
   sendAccountVerificationEmail,
-  editProfile
+  editProfile,
+  removeTags
 };

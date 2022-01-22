@@ -99,10 +99,16 @@ function addTags(tags) {
   }
 }
 
-function getTags(tags) {
+async function getTags(tags) {
   const query = generateGetTagsQuery(tags.length);
 
-  return client.query(query, tags);
+  const returnedTags = await client.query(query, tags);
+
+  if (returnedTags.rowCount > 0) {
+    return returnedTags.rows;
+  } else {
+    return null;
+  }
 
   function generateGetTagsQuery(size) {
     let query = "SELECT * FROM tags WHERE ";
@@ -143,6 +149,26 @@ function addUserTags(userId, tags) {
   }
 }
 
+function deleteUserTags(tags, userId) {
+  const query = generateDeleteTagsQuery(tags.length);
+
+  return client.query(query, [userId, ...tags]);
+
+  function generateDeleteTagsQuery(size) {
+    let query = "DELETE FROM user_tags WHERE user_id = $1 AND ";
+    for (let i = 1; i <= tags.length; i++) {
+      let value = `tag_id = $${i + 1}`;
+      if (i == size) {
+        value += ";";
+      } else {
+        value += " OR ";
+      }
+      query += value;
+    }
+    return query;
+  }
+}
+
 module.exports = {
   createUser,
   getUserByEmail,
@@ -154,5 +180,6 @@ module.exports = {
   addTags,
   getTags,
   addUserTags,
-  editUserProfile
+  editUserProfile,
+  deleteUserTags
 };
