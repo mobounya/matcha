@@ -87,11 +87,7 @@ async function editUserProfile(profile, userId) {
         profile.biography,
         userId
     ]);
-    if (data.rowCount == 1) {
-        return data.rows[0];
-    } else {
-        return null;
-    }
+    return data.rows[0];
 }
 
 function addTags(tags) {
