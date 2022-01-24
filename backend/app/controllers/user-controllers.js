@@ -25,8 +25,6 @@ async function getUserAccount(request, response) {
       data: {
         id: userAccount.id,
         email: userAccount.email,
-        first_name: userAccount.first_name,
-        last_name: userAccount.last_name,
         username: userAccount.username,
         is_active: userAccount.is_active
       }
