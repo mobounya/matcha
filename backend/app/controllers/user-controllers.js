@@ -17,6 +17,25 @@ async function insertUser(request, response) {
   }
 }
 
+async function getUserAccount(request, response) {
+  try {
+    const userId = request.jwtPayload.userId;
+    const userAccount = await db.getUserAccountById(userId);
+    response.status(httpStatus.HTTP_OK).json({
+      data: {
+        id: userAccount.id,
+        email: userAccount.email,
+        username: userAccount.username,
+        is_active: userAccount.is_active
+      }
+    });
+  } catch (e) {
+    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
+    });
+  }
+}
+
 async function verifyEmail(request, response) {
   try {
     const email = request.decodedPayload.email;
@@ -269,5 +288,6 @@ module.exports = {
   sendAccountVerificationEmail,
   editProfile,
   removeTags,
-  getUserTags
+  getUserTags,
+  getUserAccount
 };

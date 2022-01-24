@@ -22,7 +22,7 @@ function auth(getToken, options) {
       const userId = decodedPayload.userId;
       request.jwtPayload = decodedPayload;
       if (options.fetchCurrentUser) {
-        const user = await db.getUserById(userId);
+        const user = await db.getUserAccountById(userId);
         if (user) {
           request.user = user;
           return next();
