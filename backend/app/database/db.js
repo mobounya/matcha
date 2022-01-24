@@ -39,7 +39,7 @@ async function getUserByEmail(email) {
   }
 }
 
-async function getUserById(id) {
+async function getUserAccountById(id) {
   const query = "SELECT * FROM users WHERE id = $1";
   const data = await client.query(query, [id]);
   if (data.rowCount == 1) {
@@ -210,7 +210,7 @@ module.exports = {
   changeUserPassword,
   addUserProfile,
   getUserProfile,
-  getUserById,
+  getUserAccountById,
   addTags,
   getTags,
   addUserTags,

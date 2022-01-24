@@ -88,11 +88,17 @@ router.post(
 );
 
 router.post(
-  "/signup",
+  "/account",
   validateSchema(signupSchema, requestFields.BODY),
   userMiddlewares.checkDuplicateEmail,
   userMiddlewares.hashPassword,
   userControllers.insertUser
+);
+
+router.get(
+  "/account",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  userControllers.getUserAccount
 );
 
 router.post(
