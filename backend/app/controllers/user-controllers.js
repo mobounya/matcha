@@ -40,7 +40,7 @@ async function editUserAccount(request, response, next) {
   try {
     const userId = request.jwtPayload.userId;
     const accountData = request.body;
-    const oldAccountData = await db.getUserById(userId);
+    const oldAccountData = await db.getUserAccountById(userId);
     const newAccount = await db.editUserAccount(accountData, userId);
     if (oldAccountData.email != newAccount.email) {
       const isVerified = false;
@@ -56,6 +56,7 @@ async function editUserAccount(request, response, next) {
       }
     });
   } catch (e) {
+    console.log(e);
     response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
       error: "something went wrong"
     });
