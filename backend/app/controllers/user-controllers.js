@@ -51,13 +51,13 @@ async function verifyEmail(request, response) {
   }
 }
 
-function changeUserPassword(getUserEmail) {
+function changeUserPassword(getUserId) {
   return async (request, response) => {
     try {
-      const email = getUserEmail(request);
+      const id = getUserId(request);
       const password = request.body.password;
 
-      await db.changeUserPassword(email, password);
+      await db.changeUserPassword(id, password);
       response.status(httpStatus.HTTP_OK).json({
         message: "password updated successfully"
       });
