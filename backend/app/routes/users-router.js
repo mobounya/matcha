@@ -103,8 +103,7 @@ router.get(
 
 router.post(
   "/send-verification-email",
-  validateSchema(emailSchema, requestFields.BODY),
-  userMiddlewares.checkIfAccountIsValid(getEmailFromBody),
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
   userControllers.sendAccountVerificationEmail
 );
 
