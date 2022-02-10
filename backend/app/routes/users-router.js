@@ -22,7 +22,7 @@ const tokenValidatorMiddlewares = require("../middlewares/token-validator-middle
 const authMiddleware = require("../middlewares/auth-middlewares");
 
 function getEmailFromDecodedJwtPayload(request) {
-  return request.decodedPayload.email;
+  return request.jwtPayload.email;
 }
 
 function getEmailFromBody(request) {
@@ -135,6 +135,7 @@ router.post(
   userControllers.sendResetPasswordEmail
 );
 
+/* TODO: bug in this endpoint, changeUserPassword uses id instead of email to filter the specific user */
 router.put(
   "/reset-password",
   validateSchema(tokenSchema, requestFields.QUERY),
@@ -146,6 +147,14 @@ router.put(
   userMiddlewares.checkIfAccountIsValid(getEmailFromDecodedJwtPayload),
   userMiddlewares.hashPassword,
   userControllers.changeUserPassword(getEmailFromDecodedJwtPayload)
+);
+
+router.patch(
+  "/change-password",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  validateSchema(passwordSchema, requestFields.BODY),
+  userMiddlewares.hashPassword,
+  userControllers.changeUserPassword(getUserIdFromJwtPayload)
 );
 
 module.exports = router;

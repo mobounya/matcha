@@ -66,9 +66,9 @@ function changeEmailVerifiedValue(email, isVerified) {
   return client.query(query, [isVerified, email]);
 }
 
-function changeUserPassword(email, newPassword) {
-  const query = "UPDATE users SET password = $1 WHERE email = $2";
-  return client.query(query, [newPassword, email]);
+function changeUserPassword(id, newPassword) {
+  const query = "UPDATE users SET password = $1 WHERE id = $2";
+  return client.query(query, [newPassword, id]);
 }
 
 async function addUserProfile(
