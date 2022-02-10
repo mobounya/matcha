@@ -13,7 +13,9 @@ const { emailSchema } = require("../notJoi_schemas/email-schema");
 const { passwordSchema } = require("../notJoi_schemas/password-schema");
 const { profileSchema } = require("../notJoi_schemas/profile-schema");
 const { tagsSchema } = require("../notJoi_schemas/tags-schema");
-
+const {
+  patchAccountSchema
+} = require("../notJoi_schemas/patch-account-schema");
 const userControllers = require("../controllers/user-controllers");
 const userMiddlewares = require("../middlewares/users-middlewares");
 const tokenValidatorMiddlewares = require("../middlewares/token-validator-middleware");
@@ -99,6 +101,13 @@ router.get(
   "/account",
   authMiddleware.auth(authMiddleware.getTokenFromCookie),
   userControllers.getUserAccount
+);
+
+router.patch(
+  "/account",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  validateSchema(patchAccountSchema, requestFields.BODY),
+  userControllers.editUserAccount
 );
 
 router.post(

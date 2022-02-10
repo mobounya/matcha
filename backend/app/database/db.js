@@ -29,6 +29,18 @@ async function createUser(userData) {
   }
 }
 
+async function editUserAccount(accountData, userId) {
+  const query =
+    "UPDATE users SET email = $1, username = $2 WHERE id = $3 RETURNING *";
+
+  const userAccount = await client.query(query, [
+    accountData.email,
+    accountData.username,
+    userId
+  ]);
+  return userAccount.rows[0];
+}
+
 async function getUserByEmail(email) {
   const query = "SELECT * FROM users WHERE email = $1";
   const data = await client.query(query, [email]);
@@ -216,5 +228,6 @@ module.exports = {
   addUserTags,
   editUserProfile,
   deleteUserTags,
-  fetchUserTags
+  fetchUserTags,
+  editUserAccount
 };

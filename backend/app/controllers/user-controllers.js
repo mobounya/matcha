@@ -36,6 +36,33 @@ async function getUserAccount(request, response) {
   }
 }
 
+async function editUserAccount(request, response, next) {
+  try {
+    const userId = request.jwtPayload.userId;
+    const accountData = request.body;
+    const oldAccountData = await db.getUserAccountById(userId);
+    const newAccount = await db.editUserAccount(accountData, userId);
+    if (oldAccountData.email != newAccount.email) {
+      const isVerified = false;
+      await db.changeEmailVerifiedValue(newAccount.email, isVerified);
+    }
+    response.status(httpStatus.HTTP_OK).json({
+      message: "account edited successfully",
+      data: {
+        id: newAccount.id,
+        email: newAccount.email,
+        username: newAccount.username,
+        isVerified: newAccount.email_verified
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
+    });
+  }
+}
+
 async function verifyEmail(request, response) {
   try {
     const email = request.decodedPayload.email;
@@ -289,5 +316,6 @@ module.exports = {
   editProfile,
   removeTags,
   getUserTags,
-  getUserAccount
+  getUserAccount,
+  editUserAccount
 };
