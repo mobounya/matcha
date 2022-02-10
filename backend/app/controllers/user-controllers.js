@@ -159,8 +159,8 @@ function checkDuplicateProfile(getUserId) {
   };
 }
 
-function generateEmailVerificationToken(email) {
-  const payload = { email: email };
+function generateEmailVerificationToken(userId, email) {
+  const payload = { userId: userId, email: email };
   const secretKey = process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY;
   const expiration = "1d";
   return jwtSignPayload(payload, secretKey, expiration);
@@ -175,8 +175,10 @@ function generateResetPasswordToken(email) {
 
 async function sendAccountVerificationEmail(request, response) {
   try {
-    const email = request.body.email;
-    const token = await generateEmailVerificationToken(email);
+    const userId = request.jwtPayload.userId;
+    const userData = await db.getUserAccountById(userId);
+    const email = userData.email;
+    const token = await generateEmailVerificationToken(userId, email);
     const address = request.hostname;
     const port = 3000;
     // need to change link later
