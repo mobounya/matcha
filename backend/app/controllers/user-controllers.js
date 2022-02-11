@@ -159,6 +159,29 @@ function checkDuplicateProfile(getUserId) {
   };
 }
 
+function getUserProfile(getUserID) {
+  return async (request, response) => {
+    try {
+      const userId = getUserID(request);
+      const userProfile = await db.getUserProfile(userId);
+      response.status(httpStatus.HTTP_OK).json({
+        data: {
+          id: userProfile.rows[0].id,
+          firstName: userProfile.rows[0].first_name,
+          lastName: userProfile.rows[0].last_name,
+          gender: userProfile.rows[0].gender,
+          sexualPreference: userProfile.rows[0].sexual_preference,
+          biography: userProfile.rows[0].biography
+        }
+      });
+    } catch (error) {
+      response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+        error: "something went wrong"
+      });
+    }
+  };
+}
+
 function generateEmailVerificationToken(userId, email) {
   const payload = { userId: userId, email: email };
   const secretKey = process.env.JWT_EMAIL_VERIFICATION_SECRET_KEY;
@@ -319,5 +342,6 @@ module.exports = {
   removeTags,
   getUserTags,
   getUserAccount,
-  editUserAccount
+  editUserAccount,
+  getUserProfile
 };

@@ -16,6 +16,7 @@ const { tagsSchema } = require("../notJoi_schemas/tags-schema");
 const {
   patchAccountSchema
 } = require("../notJoi_schemas/patch-account-schema");
+const { userIdParamSchema } = require("../notJoi_schemas/userId-param-schema");
 const userControllers = require("../controllers/user-controllers");
 const userMiddlewares = require("../middlewares/users-middlewares");
 const tokenValidatorMiddlewares = require("../middlewares/token-validator-middleware");
@@ -33,8 +34,12 @@ function getUserIdFromJwtPayload(request) {
   return request.jwtPayload.userId;
 }
 
+function getUserIdFromParams(request) {
+  return request.params.userId;
+}
+
 /*
-  User routes
+  Profile routes
 */
 
 router.post(
@@ -56,6 +61,18 @@ router.put(
   userMiddlewares.checkIfProfileExist(getUserIdFromJwtPayload),
   userControllers.editProfile(getUserIdFromJwtPayload)
 );
+
+router.get(
+  "/:userId",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  validateSchema(userIdParamSchema, requestFields.PARAMS),
+  userMiddlewares.checkIfProfileExist(getUserIdFromParams),
+  userControllers.getUserProfile(getUserIdFromParams)
+);
+
+/*
+  Tags routes
+*/
 
 router.post(
   "/tags",
@@ -89,6 +106,8 @@ router.post(
   userControllers.sendAuthToken
 );
 
+/* Account routes */
+
 router.post(
   "/account",
   validateSchema(signupSchema, requestFields.BODY),
@@ -110,6 +129,8 @@ router.patch(
   userControllers.editUserAccount
 );
 
+/* Email verification routes */
+
 router.post(
   "/send-verification-email",
   authMiddleware.auth(authMiddleware.getTokenFromCookie),
@@ -126,6 +147,8 @@ router.patch(
   userMiddlewares.checkIfAccountIsValid(getEmailFromDecodedJwtPayload),
   userControllers.verifyEmail
 );
+
+/* --------------- */
 
 router.post(
   "/send-reset-password-email",
