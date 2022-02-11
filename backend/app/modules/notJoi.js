@@ -73,7 +73,7 @@ class CustomValidator {
     }
 
     const saveValue = val;
-    if (!(val = typeValidator(val))) {
+    if ((val = typeValidator(val)) === false) {
       return {
         value: saveValue,
         error: `"value" must be a ${valueType}`
