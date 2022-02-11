@@ -30,7 +30,7 @@ function checkIfProfileExist(getUserId) {
         next();
       } else {
         return response.status(httpStatus.HTTP_UNPROCESSABLE_ENTITY).json({
-          error: "user does not have a profile"
+          error: "no such profile"
         });
       }
     } catch (e) {
