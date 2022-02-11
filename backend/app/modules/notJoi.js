@@ -1,4 +1,4 @@
-/* 
+/*
   Available methods:
   - required
   - object
@@ -11,7 +11,7 @@
     - lowercase
     - uppercase
     - email
-  
+
 */
 
 class CustomValidator {
@@ -20,31 +20,44 @@ class CustomValidator {
       if (typeof value != "string") {
         return false;
       }
-      return true;
+      return value;
     }
 
     function isObject(value) {
       if (typeof value != "object" || Array.isArray(value)) {
         return false;
       }
-      return true;
+      return value;
     }
 
     function isArray(value) {
       if (!Array.isArray(value)) {
         return false;
       }
-      return true;
+      return value;
+    }
+
+    function isInteger(value) {
+      const numericRegex = /^[0-9]+$/gi;
+      if (typeof value != "string" && typeof value != "number") {
+        return false;
+      }
+      if (!value.toString().match(numericRegex)) {
+        return false;
+      }
+      return Number(value);
     }
 
     this.types = new Map([
       ["string", isString],
+      ["integer", isInteger],
       ["object", isObject],
       ["array", isArray]
     ]);
   }
+
   _validate(val) {
-    var returnValue = { value: val };
+    const returnValue = { value: val };
     const valueType = this.type;
     const typeValidator = this.types.get(valueType);
 
@@ -59,9 +72,10 @@ class CustomValidator {
       }
     }
 
-    if (!typeValidator(val)) {
+    const saveValue = val;
+    if (!(val = typeValidator(val))) {
       return {
-        value: val,
+        value: saveValue,
         error: `"value" must be a ${valueType}`
       };
     }
@@ -74,14 +88,17 @@ class CustomValidator {
         returnValue.error = error;
         return true;
       }
+      return false;
     });
 
     return returnValue;
   }
+
   _required() {
     this.isRequired = true;
     return this;
   }
+
   string() {
     function alphanum() {
       this.validators.push(isAlphanum);
@@ -246,12 +263,13 @@ class CustomValidator {
       types: this.types
     };
   }
+
   object(schemaObj) {
     function validateObject(value) {
       const expectedType = this.type;
       const typeValidator = this.types.get(expectedType);
-      var errors = [];
-      var newValue = {};
+      const errors = [];
+      const newValue = {};
       if (typeof value == "undefined" && !this.isRequired) {
         return { value: value };
       }
@@ -295,6 +313,7 @@ class CustomValidator {
       validate: validateObject
     };
   }
+
   array() {
     function min(min) {
       this.validators.push(isMin);
@@ -350,6 +369,77 @@ class CustomValidator {
       min: min,
       max: max,
       length: length,
+      required: this._required,
+      validate: this._validate
+    };
+  }
+
+  integer() {
+    function min(n) {
+      this.validators.push(isMin);
+
+      function isMin(value) {
+        if (value < n) {
+          return {
+            value: value,
+            error: `"value" should be greater or equal to ${n}`
+          };
+        } else {
+          return {
+            value: value
+          };
+        }
+      }
+
+      return this;
+    }
+
+    function max(n) {
+      this.validators.push(isMax);
+
+      function isMax(value) {
+        if (value > n) {
+          return {
+            value: value,
+            error: `"value" should be lower or equal to ${n}`
+          };
+        } else {
+          return {
+            value: value
+          };
+        }
+      }
+
+      return this;
+    }
+
+    function equal(n) {
+      this.validators.push(isEqual);
+
+      function isEqual(value) {
+        if (value != n) {
+          return {
+            value: value,
+            error: `"value" should be equal to ${n}`
+          };
+        } else {
+          return {
+            value: value
+          };
+        }
+      }
+
+      return this;
+    }
+
+    return {
+      type: "integer",
+      validators: [],
+      types: this.types,
+      isRequired: false,
+      min: min,
+      max: max,
+      equal: equal,
       required: this._required,
       validate: this._validate
     };
