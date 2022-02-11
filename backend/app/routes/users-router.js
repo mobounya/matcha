@@ -95,7 +95,15 @@ router.patch(
 router.get(
   "/tags",
   authMiddleware.auth(authMiddleware.getTokenFromCookie),
-  userControllers.getUserTags
+  userControllers.getUserTags(getUserIdFromJwtPayload)
+);
+
+router.get(
+  "/:userId/tags",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  validateSchema(userIdParamSchema, requestFields.PARAMS),
+  userMiddlewares.checkIfProfileExist(getUserIdFromParams),
+  userControllers.getUserTags(getUserIdFromParams)
 );
 
 router.post(
