@@ -17,6 +17,22 @@ services:
     networks:
       - backend-net
 
+  matcha_client:
+    container_name: "matcha_client"
+    restart: always
+    depends_on:
+      - matcha_app
+    build:
+      context: ./frontend
+    ports:
+      - 8000:3000
+    volumes:
+      - ./frontend/:/home/node/app
+    networks:
+      - frontend-net
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+
   matcha_db:
     container_name: "matcha_db"
     image: postgres
@@ -45,3 +61,4 @@ volumes:
 
 networks:
   backend-net:
+  frontend-net:
