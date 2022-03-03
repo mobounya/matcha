@@ -267,18 +267,20 @@ async function addUserTags(request, response) {
   }
 }
 
-async function getUserTags(request, response) {
-  try {
-    const userId = request.jwtPayload.userId;
-    const userTags = await db.fetchUserTags(userId);
-    response.status(httpStatus.HTTP_OK).json({
-      data: userTags
-    });
-  } catch (e) {
-    response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
-      error: "something went wrong"
-    });
-  }
+function getUserTags(getUserId) {
+  return async (request, response) => {
+    try {
+      const userId = getUserId(request);
+      const userTags = await db.fetchUserTags(userId);
+      response.status(httpStatus.HTTP_OK).json({
+        data: userTags
+      });
+    } catch (e) {
+      response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+        error: "something went wrong"
+      });
+    }
+  };
 }
 
 function editProfile(getUserId) {
