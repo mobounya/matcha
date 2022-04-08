@@ -101,6 +101,33 @@ function getUserProfile(userId) {
   return client.query(query, [userId]);
 }
 
+async function matchProfiles(profiles, gender) {
+  const query = generateQuery(profiles.length);
+
+  const matchedProfiles = await client.query(
+    query,
+    gender ? [...profiles, gender] : [...profiles]
+  );
+
+  return matchedProfiles.rows;
+
+  function generateQuery(size) {
+    let query = "SELECT * FROM profiles WHERE (";
+
+    for (let i = 1; i <= size; i++) {
+      let value = `id = $${i}`;
+      query +=
+        i != size
+          ? (value += " OR ")
+          : gender
+          ? (value += `) AND gender = $${i + 1};`)
+          : (value += ");");
+    }
+
+    return query;
+  }
+}
+
 async function editUserProfile(profile, userId) {
   const query =
     "UPDATE profiles SET (first_name, last_name, gender, sexual_preference, biography) = ($1, $2, $3, $4, $5) WHERE id = $6 RETURNING *";
@@ -215,6 +242,28 @@ async function fetchUserTags(userId) {
   return userTags.rows;
 }
 
+function getUserTagsByName(tags) {
+  const query = generateQuery(tags);
+
+  return client.query(query, tags);
+
+  function generateQuery(tags) {
+    const size = tags.length;
+    let query =
+      "SELECT tags.id, tags.tag, user_tags.user_id FROM tags INNER JOIN user_tags ON tags.id = user_tags.tag_id WHERE ";
+    for (let i = 1; i <= tags.length; i++) {
+      let value = `tags.tag = $${i}`;
+      if (i == size) {
+        value += ";";
+      } else {
+        value += " OR ";
+      }
+      query += value;
+    }
+    return query;
+  }
+}
+
 module.exports = {
   createUser,
   getUserByEmail,
@@ -229,5 +278,7 @@ module.exports = {
   editUserProfile,
   deleteUserTags,
   fetchUserTags,
-  editUserAccount
+  editUserAccount,
+  getUserTagsByName,
+  matchProfiles
 };
