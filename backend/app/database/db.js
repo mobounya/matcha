@@ -116,16 +116,12 @@ async function matchProfiles(profiles, gender) {
 
     for (let i = 1; i <= size; i++) {
       let value = `id = $${i}`;
-      if (i != size) {
-        value += " OR ";
-      } else {
-        if (gender) {
-          value += `) AND gender = $${i + 1};`;
-        } else {
-          value += ");";
-        }
-      }
-      query += value;
+      query +=
+        i != size
+          ? (value += " OR ")
+          : gender
+          ? (value += `) AND gender = $${i + 1};`)
+          : (value += ");");
     }
 
     return query;
