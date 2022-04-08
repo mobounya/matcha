@@ -1,7 +1,7 @@
 const db = require("../database/db");
 const httpStatus = require("../lib/http-status");
 
-function getPreferedGender(gender, orientation) {
+function getPreferredGender(gender, orientation) {
   const maleOrientationsMap = new Map([
     ["heterosexual", "f"],
     ["homosexual", "m"]
@@ -34,8 +34,8 @@ async function getProfileDataToMatch(request, response, next) {
     const userProfile = await db.getUserProfile(userId);
     const userTags = await db.fetchUserTags(userId);
 
-    // Get the perefered gender for the user
-    const preferedGender = getPreferedGender(
+    // Get the preferred gender for the user
+    const preferredGender = getPreferredGender(
       userProfile.rows[0].gender,
       userProfile.rows[0].sexual_preference
     );
@@ -53,7 +53,7 @@ async function getProfileDataToMatch(request, response, next) {
     // Get user profiles with the specified gender
     const matchedProfiles = await db.matchProfiles(
       userIdsWithCommonTags,
-      preferedGender
+      preferredGender
     );
 
     response.status(httpStatus.HTTP_OK).json({
