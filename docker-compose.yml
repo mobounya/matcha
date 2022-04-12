@@ -12,6 +12,7 @@ services:
       - 3000:3000
     volumes:
       - ./backend:/home/node/app
+      - ./backend/uploads:/home/node/app/uploads
     env_file:
       - ./backend/.env.app.dev
     networks:
