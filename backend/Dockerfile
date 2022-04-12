@@ -6,4 +6,4 @@ RUN mkdir /home/node/app
 
 WORKDIR /home/node/app
 
-CMD "npm" "i" && "npm" "run" "dev"
+CMD "chmod" "744" "/home/node/app/uploads" && "npm" "i" && "npm" "run" "dev"
