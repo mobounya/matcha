@@ -3,6 +3,10 @@ const httpStatus = require("../lib/http-status");
 const { sendMail } = require("../modules/nodemailer");
 const { jwtSignPayload } = require("../modules/jwt");
 
+const sendUserResponse = (req, res) => {
+	res.status(httpStatus.HTTP_CREATED).json(res.locals.body);
+}
+
 async function insertUser(request, response) {
   try {
     const user = await db.createUser(request.body);
@@ -56,7 +60,6 @@ async function editUserAccount(request, response, next) {
       }
     });
   } catch (e) {
-    console.log(e);
     response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
       error: "something went wrong"
     });
@@ -345,5 +348,6 @@ module.exports = {
   getUserTags,
   getUserAccount,
   editUserAccount,
-  getUserProfile
+  getUserProfile,
+	sendUserResponse
 };
