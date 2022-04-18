@@ -38,8 +38,6 @@ CREATE TABLE IF NOT EXISTS pictures (
   pictures_id SERIAL NOT NULL PRIMARY KEY,
   user_id INT NOT NULL,
   file_name TEXT NOT NULL,
-  file_path TEXT NOT NULL,
-  pictures_index INT DEFAULT 0,
   is_profile_picture boolean DEFAULT 'f',
   upload_date timestamp,
   FOREIGN KEY(user_id) REFERENCES users(id)
