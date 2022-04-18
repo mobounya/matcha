@@ -8,7 +8,35 @@ const client = new Client({
   port: process.env.POSTGRES_PORT
 });
 
-client.connect();
+client.connect()
+			.then(() => console.log('connected'))
+			.catch(err => console.error('connection error', err.stack))
+
+const getUserPictures = async userId => {
+	const query = "SELECT * FROM pictures WHERE user_id = $1";
+	const data = await client.query(query, [userId]);
+	return data.rows;
+}
+
+const insertUserPicture = async userPictureData => {
+	const query =
+		"INSERT INTO pictures(user_id, file_name, is_profile_picture, upload_date) VALUES($1, $2, $3, $4) RETURNING *";
+		const data = await client.query(query, [
+			userPictureData.userId,
+			userPictureData.fileName,
+			userPictureData.isProfilePicture,
+			userPictureData.uploadData
+		]);
+		return (data.rowCount == 1) ? data.rows[0] : null;
+
+}
+
+const deleteUserPicture = async pictureId => {
+	const query = 
+		"DELETE FROM pictures WHERE pictures_id = $1";
+	const data = await client.query(query, [pictureId]);
+	return data.rowCount == 1 ? true : false;
+}
 
 async function createUser(userData) {
   const query =
@@ -280,5 +308,8 @@ module.exports = {
   fetchUserTags,
   editUserAccount,
   getUserTagsByName,
-  matchProfiles
+  matchProfiles,
+	getUserPictures,
+	insertUserPicture,
+	deleteUserPicture,
 };
