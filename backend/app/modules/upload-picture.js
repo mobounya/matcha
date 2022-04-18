@@ -17,9 +17,9 @@ const options = {
 
 const fileFilter = (req, res, next) => {
 	((req.file.mimetype === 'image/jpeg' || req.file.mimetype === 'image/jpg') && isJpeg(req.file.buffer)) ? next() : 
-	(req.file.mimetype === 'image/png' && isPng(file.buffer)) ? next() : res.
-	status(httpStatus.HTTP_UNSUPPORTED_MEDIA_TYPE).json({
-		message: "Unsupported file type, please upload a jpeg or png file"
+	(req.file.mimetype === 'image/png' && isPng(file.buffer)) ? next() :
+	res.status(httpStatus.HTTP_UNSUPPORTED_MEDIA_TYPE).json({
+		message: "Unsupported file type, please upload a jpeg or png picture"
 	});
 }
 

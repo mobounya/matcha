@@ -22,6 +22,8 @@ const userMiddlewares = require("../middlewares/users-middlewares");
 const tokenValidatorMiddlewares = require("../middlewares/token-validator-middleware");
 const authMiddleware = require("../middlewares/auth-middlewares");
 
+const { uploadPicture, fileFilter } = require("../modules/upload-picture");
+
 function getEmailFromDecodedJwtPayload(request) {
   return request.jwtPayload.email;
 }
@@ -51,6 +53,16 @@ router.post(
   }),
   userMiddlewares.validateProfileData,
   userControllers.addUserProfile
+);
+
+router.post(
+	"/upload-picture",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
+	uploadPicture,
+	fileFilter,
+	userMiddlewares.insertUserPicture,
+	userMiddlewares.savePicture,
+	userControllers.sendUserResponse
 );
 
 router.put(
