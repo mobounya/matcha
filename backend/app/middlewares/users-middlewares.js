@@ -1,6 +1,87 @@
 const db = require("../database/db");
 const httpStatus = require("../lib/http-status");
 const { bcryptHash, bcryptCompare } = require("../modules/bcrypt");
+const { streamPicture } = require("../modules/upload-picture");
+const { getUserIdFromJwt } = require("../middlewares/auth-middlewares")
+
+const savePicture = (req, res, next) => {
+	const path = process.env.UPLOADS_PATH + res.locals.fileName;
+	const buffer = req.file.buffer;
+	streamPicture(path, buffer)
+	.then(() => {
+		next();
+	})
+	.catch(err => {
+		console.log(err)
+		return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+			message: "Something went wrong"
+		});
+	});
+}
+
+const insertUserPicture = async (req, res, next) => {
+	
+	try {
+		const userId = getUserIdFromJwt(req)
+		const isProfile = JSON.parse(req.body.data).isProfile
+		const timeStamp = new Date();
+		const now = Date.now();
+		const fileName = isProfile ? 
+			`profile_${userId}_${now}.${req.file.mimetype.split('/')[1]}` : 
+			`${userId}_${now}.${req.file.mimetype.split('/')[1]}`;
+		res.locals.fileName = fileName
+
+		userPictureData = {
+		"userId": userId,
+		"fileName": fileName,
+		"isProfilePicture": isProfile,
+		"uploadData": timeStamp
+		};
+
+		const pictures = await db.getUserPictures(userId);
+		if (isProfile) {
+			const getProfilePicture = pictureElm => pictureElm.is_profile_picture;
+			const profilePictureElm = pictures.find(getProfilePicture);
+			if (profilePictureElm) {
+				const pictureIdToDelete = profilePictureElm.pictures_id
+				const ret = await db.deleteUserPicture(pictureIdToDelete)
+				if (!ret) {
+					return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+						error: "something went wrong"
+					});
+				 }
+		 	}
+			const uploadedPicture = await db.insertUserPicture(userPictureData);
+			res.locals.body = {
+				message: "User picture uploaded successfully",
+				data: uploadedPicture
+			}
+			return next();
+		}
+		if (pictures.length <= 4) {
+			const uploadedPicture = await db.insertUserPicture(userPictureData);
+			if (!uploadedPicture) {
+				return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+					error: "something went wrong"
+				});
+			}
+			res.locals.body = {
+				message: "User picture uploaded successfully",
+				data: uploadedPicture
+			}
+		} else {
+			return res.status(httpStatus.HTTP_BAD_REQUEST).json({
+				error: "You have reached the maximum number of uploaded pictures per profile"
+			})
+		}
+		return next()
+	} catch (e) {
+		console.error(e)
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+			error: "something went wrong"
+		});
+	}
+}
 
 async function checkDuplicateEmail(request, response, next) {
   try {
@@ -183,5 +264,7 @@ module.exports = {
   checkCredentials,
   removeDuplicateTags,
   validateTags,
-  checkIfProfileExist
+  checkIfProfileExist,
+	savePicture,
+	insertUserPicture,
 };
