@@ -43,10 +43,10 @@ function getTokenFromCookie(request) {
 }
 
 const getUserIdFromJwt = (req) => {
-	const { token } = req.cookies;
-	const decodedPayload = jwtVerifyToken(token);
-	const userId = decodedPayload.userId;																				
-	return userId
-}
+  const { token } = req.cookies;
+  const decodedPayload = jwtVerifyToken(token);
+  const userId = decodedPayload.userId;
+  return userId;
+};
 
 module.exports = { generateToken, auth, getTokenFromCookie, getUserIdFromJwt };
