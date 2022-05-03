@@ -4,7 +4,7 @@ const { sendMail } = require("../modules/nodemailer");
 const { jwtSignPayload } = require("../modules/jwt");
 
 const sendUserResponse = (req, res) => {
-	res.status(httpStatus.HTTP_CREATED).json(res.locals.body);
+  res.status(httpStatus.HTTP_CREATED).json(res.locals.body);
 }
 
 async function insertUser(request, response) {
@@ -349,5 +349,5 @@ module.exports = {
   getUserAccount,
   editUserAccount,
   getUserProfile,
-	sendUserResponse
+  sendUserResponse
 };
