@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS profiles (
 );
 
 CREATE TABLE IF NOT EXISTS pictures (
-  pictures_id SERIAL NOT NULL PRIMARY KEY,
+  picture_id SERIAL NOT NULL PRIMARY KEY,
   user_id INT NOT NULL,
   file_name TEXT NOT NULL,
   is_profile_picture boolean DEFAULT 'f',

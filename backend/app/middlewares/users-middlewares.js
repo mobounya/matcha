@@ -54,7 +54,7 @@ const insertUserPicture = async (req, res, next) => {
 						});
 					};
 				}				
-				const pictureIdToDelete = profilePictureElm.pictures_id;
+				const pictureIdToDelete = profilePictureElm.picture_id;
 				const filePathToDelete = process.env.UPLOADS_PATH + profilePictureElm.file_name;
 				const ret = await db.deleteUserPicture(pictureIdToDelete);
 				fs.unlink(filePathToDelete, onFailure);
