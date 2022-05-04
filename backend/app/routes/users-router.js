@@ -65,6 +65,13 @@ router.post(
 	userControllers.sendUserResponse
 );
 
+router.get(
+	"/picture",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
+	userMiddlewares.getUserIdFromRequest,
+	userControllers.getUserPicturesIds
+)
+
 router.put(
   "/",
   authMiddleware.auth(authMiddleware.getTokenFromCookie),

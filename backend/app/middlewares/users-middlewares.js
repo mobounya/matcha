@@ -6,6 +6,12 @@ const { streamPicture } = require("../modules/upload-picture");
 const { getUserIdFromJwt } = require("../middlewares/auth-middlewares");
 
 
+const getUserIdFromRequest = (req, res, next) => {
+	const userId = getUserIdFromJwt(req);
+	res.locals.userId = userId;
+	return next()
+}
+
 const savePicture = (req, res, next) => {
 	const path = process.env.UPLOADS_PATH + res.locals.fileName;
 	const buffer = req.file.buffer;
@@ -276,4 +282,5 @@ module.exports = {
   checkIfProfileExist,
 	savePicture,
 	insertUserPicture,
+	getUserIdFromRequest
 };

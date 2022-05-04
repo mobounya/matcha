@@ -7,6 +7,23 @@ const sendUserResponse = (req, res) => {
   res.status(httpStatus.HTTP_CREATED).json(res.locals.body);
 }
 
+const getUserPicturesIds = async (req, res) => {
+	try {
+		const userId = parseInt(res.locals.userId);
+		const pictures = await db.getUserPictures(userId);
+
+		const removeProfilePicture = pictureElm => !pictureElm.is_profile_picture
+		const getIds = elm => elm.picture_id
+		const userPicturesIdsSortedByDate = pictures.filter(removeProfilePicture).map(getIds)
+		
+		res.status(httpStatus.HTTP_OK).json({
+			data: userPicturesIdsSortedByDate
+		})
+	} catch (e) {
+		console.error(e)
+	}
+}
+
 async function insertUser(request, response) {
   try {
     const user = await db.createUser(request.body);
@@ -349,5 +366,6 @@ module.exports = {
   getUserAccount,
   editUserAccount,
   getUserProfile,
-  sendUserResponse
+  sendUserResponse,
+	getUserPicturesIds
 };
