@@ -11,11 +11,11 @@ const savePicture = (req, res, next) => {
 	const buffer = req.file.buffer;
 	streamPicture(path, buffer)
 	.then(() => {
-		next();
+		return next();
 	})
 	.catch(err => {
-		console.log(err)
-		return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+		console.error(err);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
 			message: "Something went wrong"
 		});
 	});
@@ -57,7 +57,7 @@ const insertUserPicture = async (req, res, next) => {
 				const pictureIdToDelete = profilePictureElm.picture_id;
 				const filePathToDelete = process.env.UPLOADS_PATH + profilePictureElm.file_name;
 				const ret = await db.deleteUserPicture(pictureIdToDelete);
-				fs.unlink(filePathToDelete, onFailure);
+				fs.rm(filePathToDelete, { force: true }, onFailure);
 		 	}
 
 			const uploadedPicture = await db.insertUserPicture(userPictureQueryData);

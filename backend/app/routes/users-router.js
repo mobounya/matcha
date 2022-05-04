@@ -56,7 +56,7 @@ router.post(
 );
 
 router.post(
-	"/upload-picture",
+	"/picture",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
 	uploadPicture,
 	fileFilter,

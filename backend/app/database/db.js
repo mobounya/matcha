@@ -33,7 +33,7 @@ const insertUserPicture = async userPictureData => {
 
 const deleteUserPicture = async pictureId => {
 	const query = 
-		"DELETE FROM pictures WHERE pictures_id = $1";
+		"DELETE FROM pictures WHERE picture_id = $1";
 	const data = await client.query(query, [pictureId]);
 	return data.rowCount == 1 ? true : false;
 }
