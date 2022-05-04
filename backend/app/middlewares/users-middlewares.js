@@ -12,6 +12,12 @@ const getUserIdFromRequest = (req, res, next) => {
 	return next()
 }
 
+const getUserIdFromParam = (req, res, next) => {
+	const userId = req.params.userId;
+	res.locals.userId = userId;
+	return next();
+}
+
 const savePicture = (req, res, next) => {
 	const path = process.env.UPLOADS_PATH + res.locals.fileName;
 	const buffer = req.file.buffer;
@@ -282,5 +288,6 @@ module.exports = {
   checkIfProfileExist,
 	savePicture,
 	insertUserPicture,
-	getUserIdFromRequest
+	getUserIdFromRequest,
+	getUserIdFromParam
 };
