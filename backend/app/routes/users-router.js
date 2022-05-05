@@ -89,6 +89,7 @@ router.get(
 	userControllers.getUserPicture
 )
 
+// Get user profile picture
 router.get(
 	"/:userId/pictures/profile",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
