@@ -22,11 +22,27 @@ const sendFile  = (res, path) => {
 
 const getUserPicture = async (req, res) => {
 	try {
-		const filePath = process.env.UPLOADS_PATH
-		const pictureId = req.params.pictureId
-		const fileName = await db.getFileNameByPictureId(pictureId)
-		const path  = `${filePath}/${fileName}`
+		const filePath = process.env.UPLOADS_PATH;
+		const pictureId = req.params.pictureId;
+		const fileName = await db.getFileNameByPictureId(pictureId);
+		const path  = `${filePath}/${fileName}`;
 		await sendFile(res, path);
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
+    });
+	}
+}
+
+const getUserProfilePicture = async (req, res) => {
+	try {
+		const filePath = process.env.UPLOADS_PATH;
+		const userId = req.params.userId;
+		const fileName = await db.getProfilePictureFileNameByUserId(userId);
+		const path  = `${filePath}/${fileName}`;
+		await sendFile(res, path);
+		res.json()
 	} catch (e) {
 		console.error(e);
 		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
@@ -40,12 +56,16 @@ const getUserPicturesIds = async (req, res) => {
 		const userId = parseInt(res.locals.userId);
 		const pictures = await db.getUserPictures(userId);
 
-		const removeProfilePicture = pictureElm => !pictureElm.is_profile_picture
-		const getIds = elm => elm.picture_id
-		const userPicturesIdsSortedByDate = pictures.filter(removeProfilePicture).map(getIds)
+		const getUserPictures = (elm) => {
+			return {
+				picture_id: elm.picture_id,
+				isProfile: elm.is_profile_picture
+			}
+		}
+		const userPictures = pictures.map(getUserPictures);
 
 		res.status(httpStatus.HTTP_OK).json({
-			data: userPicturesIdsSortedByDate
+			data: userPictures
 		})
 	} catch (e) {
 		console.error(e)
@@ -396,5 +416,6 @@ module.exports = {
   getUserProfile,
   sendUserResponse,
 	getUserPicturesIds,
-	getUserPicture
+	getUserPicture,
+	getUserProfilePicture
 };

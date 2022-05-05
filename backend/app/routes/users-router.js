@@ -57,7 +57,7 @@ router.post(
 
 // Post user picture
 router.post(
-	"/picture",
+	"/pictures",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
 	uploadPicture,
 	fileFilter,
@@ -68,7 +68,7 @@ router.post(
 
 // Get user's pictures Ids
 router.get(
-	"/picture",
+	"/pictures",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
 	userMiddlewares.getUserIdFromRequest,
 	userControllers.getUserPicturesIds
@@ -76,17 +76,23 @@ router.get(
 
 // Get other user's pictures Ids by user Id
 router.get(
-	"/:userId/picture",
+	"/:userId/pictures",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
 	userMiddlewares.getUserIdFromParam,
 	userControllers.getUserPicturesIds
 )
 
-// Get 
+// Get user picture by picture id
 router.get(
-	"/picture/:pictureId",
+	"/pictures/:pictureId",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
 	userControllers.getUserPicture
+)
+
+router.get(
+	"/:userId/pictures/profile",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	userControllers.getUserProfilePicture
 )
 
 router.put(

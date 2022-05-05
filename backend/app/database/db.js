@@ -18,6 +18,12 @@ const getUserPictures = async userId => {
 	return data.rows;
 }
 
+const getProfilePictureFileNameByUserId = async (userId) => {
+	const query = "SELECT file_name FROM pictures WHERE user_id = $1 AND is_profile_picture";
+	const data = await client.query(query, [userId]);
+	return data.rows[0]['file_name']
+}
+
 const getFileNameByPictureId = async (pictureId) => {
 	const query = "SELECT file_name FROM pictures WHERE picture_id = $1";
 	const data = await client.query(query, [pictureId])
@@ -318,5 +324,6 @@ module.exports = {
 	getUserPictures,
 	insertUserPicture,
 	deleteUserPicture,
-	getFileNameByPictureId
+	getFileNameByPictureId,
+	getProfilePictureFileNameByUserId
 };
