@@ -7,6 +7,34 @@ const sendUserResponse = (req, res) => {
   res.status(httpStatus.HTTP_CREATED).json(res.locals.body);
 }
 
+const sendFile  = (res, path) => {
+	return new Promise(
+		(resolve, reject) => {
+			res.sendFile(path, (err) => {
+				if (err) {
+					reject(err);
+				}
+				resolve();
+			})
+		}
+	)
+}
+
+const getUserPicture = async (req, res) => {
+	try {
+		const filePath = process.env.UPLOADS_PATH
+		const pictureId = req.params.pictureId
+		const fileName = await db.getFileNameByPictureId(pictureId)
+		const path  = `${filePath}/${fileName}`
+		await sendFile(res, path);
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
+    });
+	}
+}
+
 const getUserPicturesIds = async (req, res) => {
 	try {
 		const userId = parseInt(res.locals.userId);
@@ -15,7 +43,7 @@ const getUserPicturesIds = async (req, res) => {
 		const removeProfilePicture = pictureElm => !pictureElm.is_profile_picture
 		const getIds = elm => elm.picture_id
 		const userPicturesIdsSortedByDate = pictures.filter(removeProfilePicture).map(getIds)
-		
+
 		res.status(httpStatus.HTTP_OK).json({
 			data: userPicturesIdsSortedByDate
 		})
@@ -367,5 +395,6 @@ module.exports = {
   editUserAccount,
   getUserProfile,
   sendUserResponse,
-	getUserPicturesIds
+	getUserPicturesIds,
+	getUserPicture
 };

@@ -18,6 +18,12 @@ const getUserPictures = async userId => {
 	return data.rows;
 }
 
+const getFileNameByPictureId = async (pictureId) => {
+	const query = "SELECT file_name FROM pictures WHERE picture_id = $1";
+	const data = await client.query(query, [pictureId])
+	return data.rows[0]['file_name'];
+}
+
 const insertUserPicture = async userPictureData => {
 	const query =
 		"INSERT INTO pictures(user_id, file_name, is_profile_picture, upload_date) VALUES($1, $2, $3, $4) RETURNING *";
@@ -312,4 +318,5 @@ module.exports = {
 	getUserPictures,
 	insertUserPicture,
 	deleteUserPicture,
+	getFileNameByPictureId
 };

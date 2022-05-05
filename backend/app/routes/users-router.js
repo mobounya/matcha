@@ -55,6 +55,7 @@ router.post(
   userControllers.addUserProfile
 );
 
+// Post user picture
 router.post(
 	"/picture",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
@@ -65,6 +66,7 @@ router.post(
 	userControllers.sendUserResponse
 );
 
+// Get user's pictures Ids
 router.get(
 	"/picture",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
@@ -72,11 +74,19 @@ router.get(
 	userControllers.getUserPicturesIds
 )
 
+// Get other user's pictures Ids by user Id
 router.get(
-	"/picture/:userId",
+	"/:userId/picture",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
 	userMiddlewares.getUserIdFromParam,
 	userControllers.getUserPicturesIds
+)
+
+// Get 
+router.get(
+	"/picture/:pictureId",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	userControllers.getUserPicture
 )
 
 router.put(
