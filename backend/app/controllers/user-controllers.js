@@ -2,6 +2,7 @@ const db = require("../database/db");
 const httpStatus = require("../lib/http-status");
 const { sendMail } = require("../modules/nodemailer");
 const { jwtSignPayload } = require("../modules/jwt");
+const fs = require("fs");
 
 const sendUserResponse = (req, res) => {
   res.status(httpStatus.HTTP_CREATED).json(res.locals.body);
@@ -18,6 +19,34 @@ const sendFile  = (res, path) => {
 			})
 		}
 	)
+}
+
+const deleteUserPictureByPictureId = async (req, res) => {
+	try {
+		const onFailure = (err) => {
+			if (err || !ret) {
+				return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+					error: "something went wrong"
+				});
+			};
+		}				
+		const pictureIdToDelete = req.params.pictureId;
+		const filePathToDelete = process.env.UPLOADS_PATH + res.locals.fileName;
+		const ret = await db.deleteUserPicture(pictureIdToDelete);
+		fs.rm(filePathToDelete, { force: true }, onFailure);
+		console.log(res.locals.fileName);
+		res.status(httpStatus.HTTP_OK).json({
+			message: "picture has been deleted successfully",
+			data: {
+				pictureId: pictureIdToDelete
+			}
+		});
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+			message: "Something went wrong"
+		});
+	}
 }
 
 const getUserPicture = async (req, res) => {
@@ -417,5 +446,6 @@ module.exports = {
   sendUserResponse,
 	getUserPicturesIds,
 	getUserPicture,
-	getUserProfilePicture
+	getUserProfilePicture,
+	deleteUserPictureByPictureId
 };

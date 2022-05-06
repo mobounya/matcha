@@ -33,6 +33,28 @@ const savePicture = (req, res, next) => {
 	});
 }
 
+const checkIfUserIsOwnerOfPicture = async (req, res, next) => {
+	try {
+		const userId = res.locals.userId;
+		const pictureId = req.params.pictureId;
+		const pictureData  = await db.getPicture(pictureId);
+		const pictureOwnerId = pictureData.user_id
+		if (userId != pictureOwnerId) {
+			res.status(httpStatus.HTTP_FORBIDDEN).json({
+				message: "you are not allowed to delete this resource"
+			});
+		}
+		console.log("from middleware", pictureData)
+		res.locals.fileName = pictureData.file_name;
+		return next();
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+			message: "Something went wrong"
+		});
+	}
+}
+
 const insertUserPicture = async (req, res, next) => {
 	
 	try {
@@ -289,5 +311,6 @@ module.exports = {
 	savePicture,
 	insertUserPicture,
 	getUserIdFromRequest,
-	getUserIdFromParam
+	getUserIdFromParam,
+	checkIfUserIsOwnerOfPicture
 };

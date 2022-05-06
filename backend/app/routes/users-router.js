@@ -96,6 +96,15 @@ router.get(
 	userControllers.getUserProfilePicture
 )
 
+// Delete user picture
+router.delete(
+	"/pictures/:pictureId",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	userMiddlewares.getUserIdFromRequest,
+	userMiddlewares.checkIfUserIsOwnerOfPicture,
+	userControllers.deleteUserPictureByPictureId
+)
+
 router.put(
   "/",
   authMiddleware.auth(authMiddleware.getTokenFromCookie),
