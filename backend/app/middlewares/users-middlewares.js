@@ -18,6 +18,23 @@ const getUserIdFromParam = (req, res, next) => {
 	return next();
 }
 
+const checkIfUserExist = async (req, res, next) => {
+	try {
+		const userId = res.locals.userId
+		const isUser = await db.isUserExist(userId);
+		if (isUser) { return next() } else {
+			throw new Error("user doesn't exist");
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_NOT_FOUND).json(
+			{
+				message: "user doesn't exist"
+			}
+		)
+	}
+}
+
 const savePicture = (req, res, next) => {
 	const path = process.env.UPLOADS_PATH + res.locals.fileName;
 	const buffer = req.file.buffer;
@@ -312,5 +329,6 @@ module.exports = {
 	insertUserPicture,
 	getUserIdFromRequest,
 	getUserIdFromParam,
-	checkIfUserIsOwnerOfPicture
+	checkIfUserIsOwnerOfPicture,
+	checkIfUserExist
 };

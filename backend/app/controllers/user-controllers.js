@@ -34,7 +34,6 @@ const deleteUserPictureByPictureId = async (req, res) => {
 		const filePathToDelete = process.env.UPLOADS_PATH + res.locals.fileName;
 		const ret = await db.deleteUserPicture(pictureIdToDelete);
 		fs.rm(filePathToDelete, { force: true }, onFailure);
-		console.log(res.locals.fileName);
 		res.status(httpStatus.HTTP_OK).json({
 			message: "picture has been deleted successfully",
 			data: {

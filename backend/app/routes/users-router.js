@@ -81,6 +81,7 @@ router.get(
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
 	validateSchema(userIdParamSchema, requestFields.PARAMS),
 	userMiddlewares.getUserIdFromParam,
+	userMiddlewares.checkIfUserExist,
 	userControllers.getUserPicturesIds
 )
 
@@ -97,6 +98,8 @@ router.get(
 	"/:userId/pictures/profile",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
 	validateSchema(userIdParamSchema, requestFields.PARAMS),
+	userMiddlewares.getUserIdFromParam,
+	userMiddlewares.checkIfUserExist,
 	userControllers.getUserProfilePicture
 )
 
