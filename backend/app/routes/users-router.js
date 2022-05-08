@@ -56,6 +56,27 @@ router.post(
   userControllers.addUserProfile
 );
 
+router.put(
+  "/",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  validateSchema(profileSchema, requestFields.BODY),
+  userMiddlewares.validateProfileData,
+  userMiddlewares.checkIfProfileExist(getUserIdFromJwtPayload),
+  userControllers.editProfile(getUserIdFromJwtPayload)
+);
+
+router.get(
+  "/:userId",
+  authMiddleware.auth(authMiddleware.getTokenFromCookie),
+  validateSchema(userIdParamSchema, requestFields.PARAMS),
+  userMiddlewares.checkIfProfileExist(getUserIdFromParams),
+  userControllers.getUserProfile(getUserIdFromParams)
+);
+
+/*
+  Tags routes
+*/
+
 // Post user picture
 router.post(
 	"/pictures",
@@ -116,23 +137,6 @@ router.delete(
 	userMiddlewares.checkIfUserIsOwnerOfPicture,
 	userControllers.deleteUserPictureByPictureId
 )
-
-router.put(
-  "/",
-  authMiddleware.auth(authMiddleware.getTokenFromCookie),
-  validateSchema(profileSchema, requestFields.BODY),
-  userMiddlewares.validateProfileData,
-  userMiddlewares.checkIfProfileExist(getUserIdFromJwtPayload),
-  userControllers.editProfile(getUserIdFromJwtPayload)
-);
-
-router.get(
-  "/:userId",
-  authMiddleware.auth(authMiddleware.getTokenFromCookie),
-  validateSchema(userIdParamSchema, requestFields.PARAMS),
-  userMiddlewares.checkIfProfileExist(getUserIdFromParams),
-  userControllers.getUserProfile(getUserIdFromParams)
-);
 
 /*
   Tags routes
