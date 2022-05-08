@@ -17,6 +17,7 @@ const {
   patchAccountSchema
 } = require("../notJoi_schemas/patch-account-schema");
 const { userIdParamSchema } = require("../notJoi_schemas/userId-param-schema");
+const { pictureIdParamSchema } = require("../notJoi_schemas/pictureId-param-schema");
 const userControllers = require("../controllers/user-controllers");
 const userMiddlewares = require("../middlewares/users-middlewares");
 const tokenValidatorMiddlewares = require("../middlewares/token-validator-middleware");
@@ -78,6 +79,7 @@ router.get(
 router.get(
 	"/:userId/pictures",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	validateSchema(userIdParamSchema, requestFields.PARAMS),
 	userMiddlewares.getUserIdFromParam,
 	userControllers.getUserPicturesIds
 )
@@ -86,6 +88,7 @@ router.get(
 router.get(
 	"/pictures/:pictureId",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	validateSchema(pictureIdParamSchema, requestFields.PARAMS),
 	userControllers.getUserPicture
 )
 
@@ -93,6 +96,7 @@ router.get(
 router.get(
 	"/:userId/pictures/profile",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	validateSchema(userIdParamSchema, requestFields.PARAMS),
 	userControllers.getUserProfilePicture
 )
 
@@ -100,6 +104,7 @@ router.get(
 router.delete(
 	"/pictures/:pictureId",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	validateSchema(pictureIdParamSchema, requestFields.PARAMS),
 	userMiddlewares.getUserIdFromRequest,
 	userMiddlewares.checkIfUserIsOwnerOfPicture,
 	userControllers.deleteUserPictureByPictureId
