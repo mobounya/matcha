@@ -30,7 +30,7 @@ const deleteUserPictureByPictureId = async (req, res) => {
 				});
 			};
 		}				
-		const pictureIdToDelete = req.params.pictureId;
+		const pictureIdToDelete = res.locals.pictureId;
 		const filePathToDelete = process.env.UPLOADS_PATH + res.locals.fileName;
 		const ret = await db.deleteUserPicture(pictureIdToDelete);
 		fs.rm(filePathToDelete, { force: true }, onFailure);
@@ -51,7 +51,7 @@ const deleteUserPictureByPictureId = async (req, res) => {
 const getUserPicture = async (req, res) => {
 	try {
 		const filePath = process.env.UPLOADS_PATH;
-		const pictureId = req.params.pictureId;
+		const pictureId = res.locals.pictureId;
 		const fileName = await db.getFileNameByPictureId(pictureId);
 		const path  = `${filePath}/${fileName}`;
 		await sendFile(res, path);

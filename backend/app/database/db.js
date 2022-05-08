@@ -24,6 +24,12 @@ const isUserExist = async userId => {
 	return data.rowCount == 1 ? true : false;
 }
 
+const isPictureExist = async pictureId => {
+	const query = "SELECT * FROM pictures WHERE picture_id = $1";
+	const data = await client.query(query, [pictureId]);
+	return data.rowCount == 1 ? true : false;
+}
+
 const getProfilePictureFileNameByUserId = async userId => {
 	const query = "SELECT file_name FROM pictures WHERE user_id = $1 AND is_profile_picture";
 	const data = await client.query(query, [userId]);
@@ -339,5 +345,6 @@ module.exports = {
 	getFileNameByPictureId,
 	getProfilePictureFileNameByUserId,
 	getPicture,
-	isUserExist
+	isUserExist,
+	isPictureExist
 };

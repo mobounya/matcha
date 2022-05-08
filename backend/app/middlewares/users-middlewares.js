@@ -18,6 +18,12 @@ const getUserIdFromParam = (req, res, next) => {
 	return next();
 }
 
+const getPictureIdFromParam = (req, res, next) => {
+	const pictureId = req.params.pictureId;
+	res.locals.pictureId = pictureId;
+	return next();
+}
+
 const checkIfUserExist = async (req, res, next) => {
 	try {
 		const userId = res.locals.userId
@@ -30,6 +36,23 @@ const checkIfUserExist = async (req, res, next) => {
 		res.status(httpStatus.HTTP_NOT_FOUND).json(
 			{
 				message: "user doesn't exist"
+			}
+		)
+	}
+}
+
+const checkIfPictureExist = async (req, res, next) => {
+	try {
+		const pictureId = res.locals.pictureId
+		const isPicture = await db.isPictureExist(pictureId);
+		if (isPicture) { return next() } else {
+			throw new Error("picture doesn't exist");
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_NOT_FOUND).json(
+			{
+				message: "picture doesn't exist"
 			}
 		)
 	}
@@ -330,5 +353,7 @@ module.exports = {
 	getUserIdFromRequest,
 	getUserIdFromParam,
 	checkIfUserIsOwnerOfPicture,
-	checkIfUserExist
+	checkIfUserExist,
+	getPictureIdFromParam,
+	checkIfPictureExist
 };

@@ -90,6 +90,8 @@ router.get(
 	"/pictures/:pictureId",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
 	validateSchema(pictureIdParamSchema, requestFields.PARAMS),
+	userMiddlewares.getPictureIdFromParam,
+	userMiddlewares.checkIfPictureExist,
 	userControllers.getUserPicture
 )
 
@@ -109,6 +111,8 @@ router.delete(
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
 	validateSchema(pictureIdParamSchema, requestFields.PARAMS),
 	userMiddlewares.getUserIdFromRequest,
+	userMiddlewares.getPictureIdFromParam,
+	userMiddlewares.checkIfPictureExist,
 	userMiddlewares.checkIfUserIsOwnerOfPicture,
 	userControllers.deleteUserPictureByPictureId
 )
