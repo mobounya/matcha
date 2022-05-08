@@ -74,10 +74,9 @@ router.get(
 );
 
 /*
-  Tags routes
+  Pictures routes
 */
 
-// Post user picture
 router.post(
 	"/pictures",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
@@ -88,7 +87,6 @@ router.post(
 	userControllers.sendUserResponse
 );
 
-// Get user's pictures Ids
 router.get(
 	"/pictures",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
@@ -96,7 +94,6 @@ router.get(
 	userControllers.getUserPicturesIds
 )
 
-// Get other user's pictures Ids by user Id
 router.get(
 	"/:userId/pictures",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
@@ -106,7 +103,6 @@ router.get(
 	userControllers.getUserPicturesIds
 )
 
-// Get user picture by picture id
 router.get(
 	"/pictures/:pictureId",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
@@ -116,7 +112,6 @@ router.get(
 	userControllers.getUserPicture
 )
 
-// Get user profile picture
 router.get(
 	"/:userId/pictures/profile",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
@@ -126,7 +121,6 @@ router.get(
 	userControllers.getUserProfilePicture
 )
 
-// Delete user picture
 router.delete(
 	"/pictures/:pictureId",
 	authMiddleware.auth(authMiddleware.getTokenFromCookie),
