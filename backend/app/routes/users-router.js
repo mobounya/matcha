@@ -17,10 +17,13 @@ const {
   patchAccountSchema
 } = require("../notJoi_schemas/patch-account-schema");
 const { userIdParamSchema } = require("../notJoi_schemas/userId-param-schema");
+const { pictureIdParamSchema } = require("../notJoi_schemas/pictureId-param-schema");
 const userControllers = require("../controllers/user-controllers");
 const userMiddlewares = require("../middlewares/users-middlewares");
 const tokenValidatorMiddlewares = require("../middlewares/token-validator-middleware");
 const authMiddleware = require("../middlewares/auth-middlewares");
+
+const { uploadPicture, fileFilter } = require("../modules/upload-picture");
 
 function getEmailFromDecodedJwtPayload(request) {
   return request.jwtPayload.email;
@@ -69,6 +72,65 @@ router.get(
   userMiddlewares.checkIfProfileExist(getUserIdFromParams),
   userControllers.getUserProfile(getUserIdFromParams)
 );
+
+/*
+  Pictures routes
+*/
+
+router.post(
+	"/pictures",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
+	uploadPicture,
+	fileFilter,
+	userMiddlewares.insertUserPicture,
+	userMiddlewares.savePicture,
+	userControllers.sendUserResponse
+);
+
+router.get(
+	"/pictures",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie, {fetchCurrentUser: true}),
+	userMiddlewares.getUserIdFromRequest,
+	userControllers.getUserPicturesIds
+)
+
+router.get(
+	"/:userId/pictures",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	validateSchema(userIdParamSchema, requestFields.PARAMS),
+	userMiddlewares.getUserIdFromParam,
+	userMiddlewares.checkIfUserExist,
+	userControllers.getUserPicturesIds
+)
+
+router.get(
+	"/pictures/:pictureId",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	validateSchema(pictureIdParamSchema, requestFields.PARAMS),
+	userMiddlewares.getPictureIdFromParam,
+	userMiddlewares.checkIfPictureExist,
+	userControllers.getUserPicture
+)
+
+router.get(
+	"/:userId/pictures/profile",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	validateSchema(userIdParamSchema, requestFields.PARAMS),
+	userMiddlewares.getUserIdFromParam,
+	userMiddlewares.checkIfUserExist,
+	userControllers.getUserProfilePicture
+)
+
+router.delete(
+	"/pictures/:pictureId",
+	authMiddleware.auth(authMiddleware.getTokenFromCookie),
+	validateSchema(pictureIdParamSchema, requestFields.PARAMS),
+	userMiddlewares.getUserIdFromRequest,
+	userMiddlewares.getPictureIdFromParam,
+	userMiddlewares.checkIfPictureExist,
+	userMiddlewares.checkIfUserIsOwnerOfPicture,
+	userControllers.deleteUserPictureByPictureId
+)
 
 /*
   Tags routes

@@ -2,6 +2,103 @@ const db = require("../database/db");
 const httpStatus = require("../lib/http-status");
 const { sendMail } = require("../modules/nodemailer");
 const { jwtSignPayload } = require("../modules/jwt");
+const fs = require("fs");
+
+const sendUserResponse = (req, res) => {
+  res.status(httpStatus.HTTP_CREATED).json(res.locals.body);
+}
+
+const sendFile  = (res, path) => {
+	return new Promise(
+		(resolve, reject) => {
+			res.sendFile(path, (err) => {
+				if (err) {
+					reject(err);
+				}
+				resolve();
+			})
+		}
+	)
+}
+
+const deleteUserPictureByPictureId = async (req, res) => {
+	try {
+		const onFailure = (err) => {
+			if (err || !ret) {
+				return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+					error: "something went wrong"
+				});
+			};
+		}				
+		const pictureIdToDelete = res.locals.pictureId;
+		const filePathToDelete = process.env.UPLOADS_PATH + res.locals.fileName;
+		const ret = await db.deleteUserPicture(pictureIdToDelete);
+		fs.rm(filePathToDelete, { force: true }, onFailure);
+		res.status(httpStatus.HTTP_OK).json({
+			message: "picture has been deleted successfully",
+			data: {
+				pictureId: pictureIdToDelete
+			}
+		});
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+			message: "Something went wrong"
+		});
+	}
+}
+
+const getUserPicture = async (req, res) => {
+	try {
+		const filePath = process.env.UPLOADS_PATH;
+		const pictureId = res.locals.pictureId;
+		const fileName = await db.getFileNameByPictureId(pictureId);
+		const path  = `${filePath}/${fileName}`;
+		await sendFile(res, path);
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
+    });
+	}
+}
+
+const getUserProfilePicture = async (req, res) => {
+	try {
+		const filePath = process.env.UPLOADS_PATH;
+		const userId = req.params.userId;
+		const fileName = await db.getProfilePictureFileNameByUserId(userId);
+		const path  = `${filePath}/${fileName}`;
+		await sendFile(res, path);
+		res.json()
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+      error: "something went wrong"
+    });
+	}
+}
+
+const getUserPicturesIds = async (req, res) => {
+	try {
+		const userId = parseInt(res.locals.userId);
+		const pictures = await db.getUserPictures(userId);
+
+		const getUserPictures = (elm) => {
+			return {
+				picture_id: elm.picture_id,
+				isProfile: elm.is_profile_picture
+			}
+		}
+		const userPictures = pictures.map(getUserPictures);
+
+		res.status(httpStatus.HTTP_OK).json({
+			data: userPictures
+		})
+	} catch (e) {
+		console.error(e)
+	}
+}
 
 async function insertUser(request, response) {
   try {
@@ -56,7 +153,6 @@ async function editUserAccount(request, response, next) {
       }
     });
   } catch (e) {
-    console.log(e);
     response.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
       error: "something went wrong"
     });
@@ -345,5 +441,10 @@ module.exports = {
   getUserTags,
   getUserAccount,
   editUserAccount,
-  getUserProfile
+  getUserProfile,
+  sendUserResponse,
+	getUserPicturesIds,
+	getUserPicture,
+	getUserProfilePicture,
+	deleteUserPictureByPictureId
 };

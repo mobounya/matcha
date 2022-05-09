@@ -13,6 +13,7 @@ module.exports.HTTP_FORBIDDEN = 403;
 module.exports.HTTP_NOT_FOUND = 404;
 module.exports.HTTP_NOT_ACCEPTABLE = 406;
 module.exports.HTTP_CONFLICT = 409;
+module.exports.HTTP_UNSUPPORTED_MEDIA_TYPE = 415;
 module.exports.HTTP_UNPROCESSABLE_ENTITY = 422;
 module.exports.HTTP_TOO_MANY_REQUESTS = 429;
 

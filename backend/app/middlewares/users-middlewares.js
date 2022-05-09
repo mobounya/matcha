@@ -1,6 +1,170 @@
 const db = require("../database/db");
 const httpStatus = require("../lib/http-status");
+const fs = require("fs");
 const { bcryptHash, bcryptCompare } = require("../modules/bcrypt");
+const { streamPicture } = require("../modules/upload-picture");
+const { getUserIdFromJwt } = require("../middlewares/auth-middlewares");
+
+
+const getUserIdFromRequest = (req, res, next) => {
+	const userId = getUserIdFromJwt(req);
+	res.locals.userId = userId;
+	return next()
+}
+
+const getUserIdFromParam = (req, res, next) => {
+	const userId = req.params.userId;
+	res.locals.userId = userId;
+	return next();
+}
+
+const getPictureIdFromParam = (req, res, next) => {
+	const pictureId = req.params.pictureId;
+	res.locals.pictureId = pictureId;
+	return next();
+}
+
+const checkIfUserExist = async (req, res, next) => {
+	try {
+		const userId = res.locals.userId
+		const isUser = await db.isUserExist(userId);
+		if (isUser) { return next() } else {
+			throw new Error("user doesn't exist");
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_NOT_FOUND).json(
+			{
+				message: "user doesn't exist"
+			}
+		)
+	}
+}
+
+const checkIfPictureExist = async (req, res, next) => {
+	try {
+		const pictureId = res.locals.pictureId
+		const isPicture = await db.isPictureExist(pictureId);
+		if (isPicture) { return next() } else {
+			throw new Error("picture doesn't exist");
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_NOT_FOUND).json(
+			{
+				message: "picture doesn't exist"
+			}
+		)
+	}
+}
+
+const savePicture = (req, res, next) => {
+	const path = process.env.UPLOADS_PATH + res.locals.fileName;
+	const buffer = req.file.buffer;
+	streamPicture(path, buffer)
+	.then(() => {
+		return next();
+	})
+	.catch(err => {
+		console.error(err);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+			message: "Something went wrong"
+		});
+	});
+}
+
+const checkIfUserIsOwnerOfPicture = async (req, res, next) => {
+	try {
+		const userId = res.locals.userId;
+		const pictureId = req.params.pictureId;
+		const pictureData  = await db.getPicture(pictureId);
+		const pictureOwnerId = pictureData.user_id
+		if (userId != pictureOwnerId) {
+			res.status(httpStatus.HTTP_FORBIDDEN).json({
+				message: "you are not allowed to delete this resource"
+			});
+		}
+		console.log("from middleware", pictureData)
+		res.locals.fileName = pictureData.file_name;
+		return next();
+	} catch (e) {
+		console.error(e);
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+			message: "Something went wrong"
+		});
+	}
+}
+
+const insertUserPicture = async (req, res, next) => {
+	
+	try {
+		const userId = getUserIdFromJwt(req);
+		const isProfile = JSON.parse(req.body.data).isProfile;
+		const timeStamp = new Date();
+		const now = Date.now();
+		const fileName = isProfile ? 
+			`profile_${userId}_${now}.${req.file.mimetype.split('/')[1]}` : 
+			`${userId}_${now}.${req.file.mimetype.split('/')[1]}`;
+		res.locals.fileName = fileName;
+
+		userPictureQueryData = {
+		"userId": userId,
+		"fileName": fileName,
+		"isProfilePicture": isProfile,
+		"uploadData": timeStamp
+		};
+
+		const pictures = await db.getUserPictures(userId);
+
+		if (isProfile) {
+			const getProfilePicture = pictureElm => pictureElm.is_profile_picture;
+			const profilePictureElm = pictures.find(getProfilePicture);
+
+			if (profilePictureElm) {
+				const onFailure = (err) => {
+					if (err || !ret) {
+						return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+							error: "something went wrong"
+						});
+					};
+				}				
+				const pictureIdToDelete = profilePictureElm.picture_id;
+				const filePathToDelete = process.env.UPLOADS_PATH + profilePictureElm.file_name;
+				const ret = await db.deleteUserPicture(pictureIdToDelete);
+				fs.rm(filePathToDelete, { force: true }, onFailure);
+		 	}
+
+			const uploadedPicture = await db.insertUserPicture(userPictureQueryData);
+			res.locals.body = {
+				message: "User picture uploaded successfully",
+				data: uploadedPicture
+			};
+			return next();
+		}
+		if (pictures.length <= 4) {
+			const uploadedPicture = await db.insertUserPicture(userPictureQueryData);
+			if (!uploadedPicture) {
+				return res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+					error: "something went wrong"
+				});
+			}
+			res.locals.body = {
+				message: "User picture uploaded successfully",
+				data: uploadedPicture
+			};
+		} else {
+			return res.status(httpStatus.HTTP_BAD_REQUEST).json({
+				error: "You have reached the maximum number of uploaded pictures per profile"
+			});
+		}
+		return next();
+	} catch (e) {
+		console.error(e)
+		res.status(httpStatus.HTTP_INTERNAL_SERVER_ERROR).json({
+			error: "something went wrong"
+		});
+	}
+}
 
 async function checkDuplicateEmail(request, response, next) {
   try {
@@ -183,5 +347,13 @@ module.exports = {
   checkCredentials,
   removeDuplicateTags,
   validateTags,
-  checkIfProfileExist
+  checkIfProfileExist,
+	savePicture,
+	insertUserPicture,
+	getUserIdFromRequest,
+	getUserIdFromParam,
+	checkIfUserIsOwnerOfPicture,
+	checkIfUserExist,
+	getPictureIdFromParam,
+	checkIfPictureExist
 };
